@@ -47,6 +47,8 @@ namespace pathtracer
         {
             case MaterialType::Diffuse:
                 return tint(diffuse_color(hit, bounce), material.albedo);
+            case MaterialType::Metal:
+                return tint(reflect_color(hit, bounce), material.albedo);
         }
         return Color{0, 0, 0};
     }
@@ -74,6 +76,30 @@ namespace pathtracer
 
         return Color{0, 0, 0};
     }
+
+    Color Renderer::reflect_color(const HitRecord& hit, int bounce) const
+    {
+        if (bounce < 0) 
+        {
+            return Color{0, 0, 0};
+        }
+
+        Vec3 refl_direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
+        Ray refl = Ray{hit.position, refl_direction};
+    
+        const std::optional<HitRecord> next_hit = closest_hit(refl, scene_);
+        if (next_hit)
+        {
+            return handle_hit(*next_hit, bounce - 1);
+        }
+        else
+        {
+            return skybox_color(hit.incoming);
+        }
+
+        return Color{};
+    }
+
 
     Image Renderer::render() const
     {

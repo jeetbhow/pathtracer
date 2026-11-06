@@ -7,6 +7,7 @@ namespace pathtracer
     enum class MaterialType
     {
         Diffuse,
+        Metal,
     };
 
     struct Material
