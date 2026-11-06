@@ -12,6 +12,6 @@ namespace pathtracer
     struct Material
     {
         MaterialType type = MaterialType::Diffuse;
-        Vec3 albedo{1.0f, 1.0f, 1.0f};
+        Vec3 albedo{0.5f, 0.5f, 0.5f};
     };
 } // namespace pathtracer

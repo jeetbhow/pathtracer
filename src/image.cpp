@@ -6,6 +6,10 @@
 #include <ostream>
 #include <stdexcept>
 
+
+using std::clamp;
+using std::sqrt;
+
 namespace pathtracer
 {
 
@@ -15,7 +19,11 @@ namespace pathtracer
         {
             return 0;
         }
-        return static_cast<int>(std::clamp(value, 0.0f, 1.0f) * 255.0f + 0.5f);
+
+        float clamped = clamp(value, 0.0f, 1.0f);
+        float gamma_correction = sqrt(clamped);
+        int rgb = static_cast<int>((gamma_correction * 255.0f) + 0.5f);
+        return rgb;
     }
 
     Image::Image(std::size_t width, std::size_t height) : width_(width), height_(height)
