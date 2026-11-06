@@ -13,5 +13,17 @@ namespace pathtracer
         std::vector<Sphere> spheres;
     };
 
-    Image render(const Camera& camera, const Scene& scene);
+    class Renderer
+    {
+    public:
+        Renderer(const Scene& scene, const Camera& camera)
+            : scene_(scene), camera_(camera)
+        {
+        }
+
+        Image render() const;
+    private:
+        Scene scene_;
+        Camera camera_;
+    };
 } // namespace pathtracer

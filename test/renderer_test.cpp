@@ -24,15 +24,15 @@ TEST(Renderer, SelectsNearestSphereRegardlessOfOrderAndIgnoresMisses)
     }
 
     std::ostringstream near_output;
-    render(camera, Scene{{near}}).write_ppm(near_output);
+    Renderer{Scene{{near}}, camera}.render().write_ppm(near_output);
     std::ostringstream far_output;
-    render(camera, Scene{{far}}).write_ppm(far_output);
+    Renderer{Scene{{far}}, camera}.render().write_ppm(far_output);
     ASSERT_NE(near_output.str(), far_output.str());
 
     std::ostringstream near_first;
-    render(camera, Scene{{near, far, miss}}).write_ppm(near_first);
+    Renderer{Scene{{near, far, miss}}, camera}.render().write_ppm(near_first);
     std::ostringstream far_first;
-    render(camera, Scene{{far, miss, near}}).write_ppm(far_first);
+    Renderer{Scene{{far, miss, near}}, camera}.render().write_ppm(far_first);
 
     EXPECT_EQ(near_first.str(), near_output.str());
     EXPECT_EQ(far_first.str(), near_output.str());
@@ -44,9 +44,9 @@ TEST(Renderer, EmptySceneAndMissedObjectsProduceTheSameBackground)
     const Scene scene{{Sphere{Vec3{0, 0, 3}, 1.0f}}};
 
     std::ostringstream empty_output;
-    render(camera, Scene{}).write_ppm(empty_output);
+    Renderer{Scene{}, camera}.render().write_ppm(empty_output);
     std::ostringstream missed_output;
-    render(camera, scene).write_ppm(missed_output);
+    Renderer{scene, camera}.render().write_ppm(missed_output);
 
     EXPECT_EQ(missed_output.str(), empty_output.str());
 }

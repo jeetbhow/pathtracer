@@ -20,7 +20,9 @@ int main()
             Sphere{Vec3{0, -101, -3}, 100.0f}
         }
     };
-    const Image img = render(camera, scene);
+
+    const Renderer renderer{scene, camera};
+    Image img = renderer.render();
 
     std::ofstream ofs{"image.ppm"};
     if (!ofs)
