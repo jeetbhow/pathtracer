@@ -22,7 +22,7 @@ namespace pathtracer
         {
         }
 
-        std::optional<HitRecord> hit(const Ray& ray) const;
+        std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const;
         Vec3 normal(const Vec3& p) const;
         
         static Vec3 random_vector(std::mt19937& rng);

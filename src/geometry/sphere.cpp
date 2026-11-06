@@ -32,7 +32,7 @@ namespace pathtracer
         return (p - center_) / radius_;
     }
 
-    std::optional<HitRecord> Sphere::hit(const Ray& ray) const
+    std::optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
     {
         const Vec3 offset = ray.origin() - center_;
         const Vec3& direction = ray.direction();
@@ -49,14 +49,14 @@ namespace pathtracer
         const float root = std::sqrt(discriminant);
         const float near = (-half_b - root) / a;
 
-        if (near > 0.0f)
+        if (near > t_min)
         {
             const Vec3 position = ray.at(near);
             return HitRecord{near, position, normal(position), *this};
         }
 
         const float far = (-half_b + root) / a;
-        if (far > 0.0f)
+        if (far > t_min)
         {
             const Vec3 position = ray.at(far);
             return HitRecord{far, position, normal(position), *this};

@@ -64,6 +64,17 @@ TEST(Sphere, ReturnsTangentHit)
     EXPECT_FLOAT_EQ(hit->normal.z, 0.0f);
 }
 
+TEST(Sphere, SkipsRootsAtOrBelowMinimumDistance)
+{
+    const Sphere sphere{Vec3{0, 0, -5}, 1};
+    const Ray ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}};
+
+    const auto far_hit = sphere.hit(ray, 4.0f);
+    ASSERT_TRUE(far_hit.has_value());
+    EXPECT_FLOAT_EQ(far_hit->t, 6.0f);
+    EXPECT_FALSE(sphere.hit(ray, 6.0f).has_value());
+}
+
 TEST(Sphere, ReturnsNoHitForMissBackwardOrStationaryRay)
 {
     const Sphere sphere{Vec3{0, 0, -5}, 1};
