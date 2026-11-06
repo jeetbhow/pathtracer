@@ -10,6 +10,11 @@ namespace pathtracer
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
+    Vec3 Vec3::reflect(const Vec3 &incoming, const Vec3 &normal)
+    {
+        return incoming - (2 * Vec3::dot(incoming, normal)) * normal;
+    }
+
     float Vec3::length_squared() const
     {
         return dot(*this, *this);

@@ -61,3 +61,15 @@ TEST(Vec3, ScalarDivision)
 {
     ExpectVecEq(Vec3{2, -4, 6} / 2.0f, 1.0f, -2.0f, 3.0f);
 }
+
+TEST(Vec3, ReflectionReversesNormalComponentAndPreservesTangentialComponent)
+{
+    const Vec3 reflected = Vec3::reflect(Vec3{2, -3, 1}, Vec3{0, 1, 0});
+    ExpectVecEq(reflected, 2, 3, 1);
+}
+
+TEST(Vec3, ReflectionHandlesAnObliqueSurfaceNormal)
+{
+    const Vec3 reflected = Vec3::reflect(Vec3{1, 0, 0}, Vec3{0.6f, 0.8f, 0});
+    ExpectVecEq(reflected, 0.28f, -0.96f, 0);
+}

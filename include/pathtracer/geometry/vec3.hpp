@@ -9,6 +9,8 @@ namespace pathtracer
         float z;
 
         static float dot(const Vec3& a, const Vec3& b);
+        static Vec3 reflect(const Vec3& incoming, const Vec3& normal);
+
         float length_squared() const;
         float length() const;
         Vec3 normalized() const;
