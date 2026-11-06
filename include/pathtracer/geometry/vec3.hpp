@@ -16,9 +16,9 @@ namespace pathtracer
 
     using Color = Vec3;
 
-    static inline Color apply_albedo(const Color& light, const Color& albedo)
+    static inline Color tint(const Color& color, const Color& tint_color)
     {
-        return Color{light.x * albedo.x, light.y * albedo.y, light.z * albedo.z};
+        return Color{color.x * tint_color.x, color.y * tint_color.y, color.z * tint_color.z};
     }
 
     Vec3 operator+(const Vec3& a, const Vec3& b);

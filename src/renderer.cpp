@@ -58,7 +58,7 @@ namespace pathtracer
             switch (obj.material.type)
             {
                 case MaterialType::Diffuse:
-                    return apply_albedo(
+                    return tint(
                         diffuse_color(*next_hit, bounce - 1),
                         obj.material.albedo
                     );
@@ -93,7 +93,7 @@ namespace pathtracer
                         switch (obj.material.type)
                         {
                             case MaterialType::Diffuse:
-                                color += apply_albedo(
+                                color += tint(
                                     diffuse_color(*hit),
                                     obj.material.albedo
                                 );
