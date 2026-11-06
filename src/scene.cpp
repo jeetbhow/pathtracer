@@ -12,7 +12,7 @@ Camera::Camera(Image& image) : image_(image)
     }
 }
 
-Color ray_color(const Ray& ray)
+Color skybox_color(const Ray& ray)
 {
     const Vec3 unit_direction = ray.direction().normalized();
     const float t = 0.5f * (unit_direction.y + 1.0f);
@@ -23,6 +23,7 @@ Ray Camera::generate_ray(std::size_t row, std::size_t col) const
 {
     const float jitter = 0.5f;
     const float aspect_ratio = static_cast<float>(image_.width()) / static_cast<float>(image_.height());
+
     Vec3 vp_u = Vec3{vp_height_ * aspect_ratio, 0, 0};
     Vec3 vp_v = Vec3{0, -vp_height_, 0};
     Vec3 pixel_du = vp_u / static_cast<float>(image_.width());

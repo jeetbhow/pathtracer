@@ -5,8 +5,8 @@
 TEST(Scene, RayColorBlendsSkyFromWhiteToBlue)
 {
     const Vec3 origin{0, 0, 0};
-    const Color down = ray_color(Ray{origin, Vec3{0, -2, 0}});
-    const Color up = ray_color(Ray{origin, Vec3{0, 2, 0}});
+    const Color down = skybox_color(Ray{origin, Vec3{0, -2, 0}});
+    const Color up = skybox_color(Ray{origin, Vec3{0, 2, 0}});
 
     EXPECT_FLOAT_EQ(down.x, 1.0f);
     EXPECT_FLOAT_EQ(down.y, 1.0f);

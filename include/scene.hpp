@@ -22,4 +22,4 @@ private:
     float focal_len_ = 1.0f;
 };
 
-Color ray_color(const Ray& r);
+Color skybox_color(const Ray& r);
