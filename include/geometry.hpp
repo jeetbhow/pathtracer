@@ -1,8 +1,10 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
-struct Vec3 {
+struct Vec3
+{
     float x;
     float y;
     float z;
@@ -31,4 +33,15 @@ public:
 private:
     Vec3 origin_;
     Vec3 direction_;
+};
+
+class Sphere
+{
+public:
+    Sphere(const Vec3& center, float radius) : radius_(radius), center_(center) {}
+
+    std::optional<float> hit(const Ray& ray) const;
+private:
+    float radius_;
+    Vec3 center_;
 };
