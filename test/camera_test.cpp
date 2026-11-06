@@ -13,15 +13,40 @@ TEST(Camera, RejectsZeroDimensions)
 
 TEST(Camera, RejectsNonpositiveSampleCounts)
 {
-    EXPECT_THROW((Camera{7, 3, 0, 42}), std::invalid_argument);
-    EXPECT_THROW((Camera{7, 3, -1, 42}), std::invalid_argument);
+    EXPECT_THROW((Camera{7, 3, 0}), std::invalid_argument);
+    EXPECT_THROW((Camera{7, 3, -1}), std::invalid_argument);
 }
 
 TEST(Camera, GeneratesConfiguredNumberOfSamplesPerPixel)
 {
-    const Camera camera{7, 3, 5, 42};
+    const Camera camera{7, 3, 5};
     EXPECT_EQ(camera.samples_per_pixel(), 5);
-    EXPECT_EQ(camera.generate_rays(1, 3).size(), 5u);
+    std::mt19937 generator{42};
+    EXPECT_EQ(camera.generate_rays(1, 3, generator).size(), 5u);
+}
+
+TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
+{
+    const Camera camera{7, 3, 16};
+    std::mt19937 generator{42};
+    std::mt19937 replay{42};
+
+    const auto rays = camera.generate_rays(0, 0, generator);
+    const auto repeated = camera.generate_rays(0, 0, replay);
+    EXPECT_EQ(generator, replay);
+    EXPECT_NE(generator, (std::mt19937{42}));
+
+    for (std::size_t i = 0; i < rays.size(); ++i)
+    {
+        const Vec3 direction = rays[i].direction();
+        EXPECT_GE(direction.x, -7.0f / 3.0f);
+        EXPECT_LT(direction.x, -5.0f / 3.0f);
+        EXPECT_GT(direction.y, 1.0f / 3.0f);
+        EXPECT_LE(direction.y, 1.0f);
+        EXPECT_FLOAT_EQ(direction.z, -1.0f);
+        EXPECT_FLOAT_EQ(direction.x, repeated[i].direction().x);
+        EXPECT_FLOAT_EQ(direction.y, repeated[i].direction().y);
+    }
 }
 
 // Pixels are sampled at their centers; the camera looks along -Z with +Y up.

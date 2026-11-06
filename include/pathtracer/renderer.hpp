@@ -5,6 +5,8 @@
 #include "pathtracer/geometry/sphere.hpp"
 
 #include <vector>
+#include <cstdint>
+#include <random>
 
 namespace pathtracer
 {
@@ -16,8 +18,8 @@ namespace pathtracer
     class Renderer
     {
     public:
-        Renderer(const Scene& scene, const Camera& camera)
-            : scene_(scene), camera_(camera)
+        Renderer(const Scene& scene, const Camera& camera, std::uint32_t seed = std::random_device{}())
+            : scene_(scene), camera_(camera), generator_(seed)
         {
         }
 
@@ -25,5 +27,6 @@ namespace pathtracer
     private:
         Scene scene_;
         Camera camera_;
+        mutable std::mt19937 generator_;
     };
 } // namespace pathtracer

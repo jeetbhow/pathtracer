@@ -29,14 +29,14 @@ namespace pathtracer
         if (near > 0.0f)
         {
             const Vec3 position = ray.at(near);
-            return HitRecord{near, position, normal(position)};
+            return HitRecord{near, position, normal(position), *this};
         }
 
         const float far = (-half_b + root) / a;
         if (far > 0.0f)
         {
             const Vec3 position = ray.at(far);
-            return HitRecord{far, position, normal(position)};
+            return HitRecord{far, position, normal(position), *this};
         }
 
         return std::nullopt;

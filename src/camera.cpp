@@ -1,22 +1,13 @@
 #include "pathtracer/camera.hpp"
 
 #include <stdexcept>
-#include <random>
 
 using std::vector;
-using std::random_device;
-using std::mt19937;
-using std::uniform_real_distribution;
 
 namespace pathtracer
 {
     Camera::Camera(std::size_t width, std::size_t height, int samples_per_pixel)
-        : Camera(width, height, samples_per_pixel, random_device{}())
-    {
-    }
-
-    Camera::Camera(std::size_t width, std::size_t height, int samples_per_pixel, std::uint32_t seed)
-        : width_(width), height_(height), samples_per_pixel_(samples_per_pixel), seed_(seed)
+        : width_(width), height_(height), samples_per_pixel_(samples_per_pixel)
     {
         if (width_ == 0 || height_ == 0)
         {
@@ -47,23 +38,24 @@ namespace pathtracer
         return Ray{origin_, pixel_center - origin_};
     }
 
-    vector<Ray> Camera::generate_rays(std::size_t row, std::size_t col) const
+    Ray Camera::generate_ray(std::size_t row, std::size_t col, std::mt19937& generator) const
+    {
+        std::uniform_real_distribution<float> distribution{0.0f, 1.0f};
+        const float col_offset = distribution(generator);
+        const float row_offset = distribution(generator);
+        const Vec3 pixel_sample = pixel00_ + pixel_dv_ * (row + row_offset)
+                                 + pixel_du_ * (col + col_offset);
+        return Ray{origin_, pixel_sample - origin_};
+    }
+
+    vector<Ray> Camera::generate_rays(std::size_t row, std::size_t col, std::mt19937& generator) const
     {
         vector<Ray> rays;
         rays.reserve(static_cast<std::size_t>(samples_per_pixel_));
 
-        std::seed_seq seed{seed_, static_cast<std::uint32_t>(row), static_cast<std::uint32_t>(col)};
-        mt19937 gen{seed};
-        uniform_real_distribution<float> dist(0, 1);
-
         for (int i = 0; i < samples_per_pixel_; i++)
         {
-            const float col_offset = dist(gen);
-            const float row_offset = dist(gen);
-            const Vec3 pixel_center = pixel00_ +
-                                      pixel_dv_ * (row + row_offset) +
-                                      pixel_du_ * (col + col_offset);
-            rays.emplace_back(origin_, pixel_center - origin_);
+            rays.push_back(generate_ray(row, col, generator));
         }
 
         return rays;
