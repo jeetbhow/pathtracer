@@ -13,6 +13,9 @@ meson test -C build
 
 On Windows, run `build\pathtracer.exe`.
 
+With Make installed, you can also build and run with `make run`, or build and
+run the tests with `make test`. Both commands set up the build directory if needed.
+
 The executable entry point is `app/main.cpp`. It sets up the camera and sphere,
 calls the renderer, and writes `image.ppm` in the working directory.
 

@@ -12,7 +12,6 @@ unit_tests = executable(
   'unit_tests',
   test_sources,
   dependencies: [pathtracer_dep, gtest_dep],
-  override_options: ['cpp_std=c++23'],
 )
 
 test('unit', unit_tests)
