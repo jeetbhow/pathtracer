@@ -44,17 +44,20 @@ namespace pathtracer
 
     Color Renderer::handle_hit(const HitRecord& hit) const
     {
+        if (bounces_remaining_ <= 0)
+        {
+            return Color{0, 0, 0};
+        }
+
         const Material& material = hit.object.material;
         Vec3 direction;
 
         switch (material.type)
         {
             case MaterialType::Diffuse:
-                if (bounces_remaining_ <= 0) return Color{0, 0, 0};
                 direction = (hit.normal + Sphere::random_vector(generator_)).normalized();
                 break;
             case MaterialType::Metal:
-                if (bounces_remaining_ < 0) return Color{0, 0, 0};
                 direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
 
                 if (material.roughness > 0.0f)
