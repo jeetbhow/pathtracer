@@ -1,32 +1,31 @@
 #pragma once
 
+#include <string>
+
 struct Vec3 {
     float x;
     float y;
     float z;
 
-    Vec3 operator+(const Vec3& other) const {
-        return {x + other.x, y + other.y, z + other.z};
-    }
-
-    Vec3 operator-(const Vec3& other) const {
-        return {x - other.x, y - other.y, z - other.z};
-    }
-
-    Vec3 operator*(float scalar) const {
-        return {x * scalar, y * scalar, z * scalar};
-    }
+    float length_squared() const;
+    float length() const;
+    Vec3 normalized() const;
 };
+
+constexpr Vec3 operator+(const Vec3& a, const Vec3& b) { return Vec3{a.x + b.x, a.y + b.y, a.z + b.z}; }
+constexpr Vec3 operator-(const Vec3& a, const Vec3& b) { return Vec3{a.x - b.x, a.y - b.y, a.z - b.z}; }
+constexpr Vec3 operator*(const Vec3& a, float scalar) { return Vec3{a.x * scalar, a.y * scalar, a.z * scalar}; }
+constexpr Vec3 operator*(float scalar, const Vec3& a) { return a * scalar; }
+constexpr Vec3 operator/(const Vec3& a, float scalar) { return a * (1.0f / scalar); }
 
 class Ray {
 public:
-    const Vec3& direction() const {
-        return direction_;
-    }
+    Ray(const Vec3& origin, const Vec3& direction) : origin_(origin), direction_(direction) {}
 
-    const Vec3& origin() const {
-        return origin_;
-    }
+    const Vec3 &direction() const { return direction_; }
+    const Vec3 &origin() const { return origin_; }
+
+    std::string to_string() const;
 
 private:
     Vec3 origin_;
