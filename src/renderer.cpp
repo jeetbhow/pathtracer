@@ -1,7 +1,9 @@
 #include "pathtracer/renderer.hpp"
 #include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/geometry/vec3.hpp"
 
 #include <optional>
+#include <random>
 
 using std::vector;
 
@@ -38,9 +40,33 @@ namespace pathtracer
         };
     }
 
-    static Color diffuse_color(const Ray& ray)
+    Color Renderer::diffuse_color(const HitRecord& hit, int bounce) const
     {
-        
+        if (bounce <= 0)
+        {
+            return Color{0, 0, 0};
+        }
+
+        Vec3 rnd = Sphere::random_vector(generator_);
+        Vec3 sample_direction = (hit.normal + rnd).normalized();
+        Ray sample{hit.position, sample_direction};
+
+        const std::optional<HitRecord> next_hit = closest_hit(sample, scene_);
+        if (next_hit)
+        {
+            const Sphere& obj = next_hit->object;
+            switch (obj.material.type)
+            {
+                case MaterialType::Diffuse:
+                    return diffuse_color(*next_hit, bounce - 1);
+            }
+        }
+        else
+        {
+            return skybox_color(sample);
+        }
+
+        return Color{0, 0, 0};
     }
 
 
@@ -64,7 +90,7 @@ namespace pathtracer
                         switch (obj.material.type)
                         {
                             case MaterialType::Diffuse:
-
+                                color += diffuse_color(*hit);
                                 break;
                             default:
                                 break;

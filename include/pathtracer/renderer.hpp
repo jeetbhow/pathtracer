@@ -25,6 +25,8 @@ namespace pathtracer
 
         Image render() const;
     private:
+        Color diffuse_color(const HitRecord& hit, int bounce = 3) const;
+
         Scene scene_;
         Camera camera_;
         mutable std::mt19937 generator_;
