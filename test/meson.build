@@ -3,6 +3,7 @@ gtest_dep = dependency('gtest', main: true, fallback: ['gtest', 'gtest_main_dep'
 test_sources = files(
   'app_test.cpp',
   'geometry_test.cpp',
+  'image_test.cpp',
 )
 
 unit_tests = executable(

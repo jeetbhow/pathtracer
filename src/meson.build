@@ -1,6 +1,7 @@
 lib_sources = files(
   'app.cpp',
   'geometry.cpp',
+  'image.cpp',
 )
 
 app_lib = static_library(
