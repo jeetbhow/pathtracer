@@ -9,8 +9,6 @@
 namespace pathtracer
 {
 
-    using Color = Vec3;
-
     class Image
     {
     public:
