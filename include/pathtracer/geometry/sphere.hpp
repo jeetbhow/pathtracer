@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pathtracer/geometry/ray.hpp"
+#include "pathtracer/geometry/hit_record.hpp"
 
 #include <optional>
 
@@ -13,7 +14,7 @@ namespace pathtracer
         {
         }
 
-        std::optional<float> hit(const Ray& ray) const;
+        std::optional<HitRecord> hit(const Ray& ray) const;
         Vec3 normal(const Vec3& p) const;
     private:
         float radius_;

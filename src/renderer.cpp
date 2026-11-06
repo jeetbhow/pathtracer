@@ -13,10 +13,8 @@ namespace pathtracer
             return (1.0f - t) * Color{1.0f, 1.0f, 1.0f} + t * Color{0.5f, 0.7f, 1.0f};
         }
 
-        Color normal_color(const Ray& ray, float t, const Sphere& sphere)
+        Color normal_color(const Vec3& normal)
         {
-            const Vec3 surface_point = ray.at(t);
-            const Vec3 normal = sphere.normal(surface_point);
             return Color
             {
                 (normal.x + 1.0f) / 2.0f,
@@ -34,11 +32,11 @@ namespace pathtracer
             for (std::size_t col = 0; col < camera.width(); ++col)
             {
                 const Ray ray = camera.generate_ray(row, col);
-                const std::optional<float> t = sphere.hit(ray);
+                const std::optional<HitRecord> hit = sphere.hit(ray);
 
-                if (t)
+                if (hit)
                 {
-                    image.set_pixel(row, col, normal_color(ray, *t, sphere));
+                    image.set_pixel(row, col, normal_color(hit->normal));
                 }
                 else
                 {
