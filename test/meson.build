@@ -1,7 +1,7 @@
 gtest_dep = dependency('gtest', main: true, fallback: ['gtest', 'gtest_main_dep'])
 
 test_sources = files(
-  'app_test.cpp',
+  'camera_test.cpp',
   'geometry_test.cpp',
   'image_test.cpp',
 )
@@ -9,7 +9,7 @@ test_sources = files(
 unit_tests = executable(
   'unit_tests',
   test_sources,
-  dependencies: [app_dep, gtest_dep],
+  dependencies: [pathtracer_dep, gtest_dep],
   override_options: ['cpp_std=c++23'],
 )
 
