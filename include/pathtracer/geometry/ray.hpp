@@ -22,6 +22,8 @@ namespace pathtracer
             return origin_;
         }
 
+        Vec3 at(float t) const;
+
         std::string to_string() const;
 
     private:

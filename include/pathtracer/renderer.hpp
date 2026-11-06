@@ -7,7 +7,8 @@
 namespace pathtracer
 {
 
-    Color skybox_color(const Ray& ray);
-    Image render(const Camera& camera, const Sphere& sphere);
+    Color skybox_color(const Ray& r);
+    Color surface_normal(const Ray& r, float t, const Sphere& s);
+    Image render(const Camera& cam, const Sphere& s);
 
 } // namespace pathtracer

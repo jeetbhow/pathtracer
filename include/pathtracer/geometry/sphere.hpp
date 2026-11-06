@@ -14,10 +14,7 @@ namespace pathtracer
         }
 
         std::optional<float> hit(const Ray& ray) const;
-        Vec3 normal(const Vec3& p) const
-        {
-            return (p - center_) / radius_;
-        }
+        Vec3 normal(const Vec3& p) const;
     private:
         float radius_;
         Vec3 center_;

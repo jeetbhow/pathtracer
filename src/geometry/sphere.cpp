@@ -4,6 +4,10 @@
 
 namespace pathtracer
 {
+    Vec3 Sphere::normal(const Vec3 &p) const
+    {
+        return (p - center_) / radius_;
+    }
 
     std::optional<float> Sphere::hit(const Ray& ray) const
     {
@@ -35,5 +39,4 @@ namespace pathtracer
 
         return std::nullopt;
     }
-
 } // namespace pathtracer

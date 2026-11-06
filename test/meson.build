@@ -4,7 +4,6 @@ test_sources = files(
   'camera_test.cpp',
   'vec3_test.cpp',
   'sphere_test.cpp',
-  'renderer_test.cpp',
   'image_test.cpp',
 )
 

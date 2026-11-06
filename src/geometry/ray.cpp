@@ -4,6 +4,10 @@
 
 namespace pathtracer
 {
+    Vec3 Ray::at(float t) const
+    {
+        return origin_ + t * direction_;
+    }
 
     std::string Ray::to_string() const
     {
