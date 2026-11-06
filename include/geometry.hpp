@@ -7,6 +7,7 @@ struct Vec3 {
     float y;
     float z;
 
+    static float dot(const Vec3& a, const Vec3& b);
     float length_squared() const;
     float length() const;
     Vec3 normalized() const;

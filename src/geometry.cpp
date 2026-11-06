@@ -3,9 +3,14 @@
 #include <cmath>
 #include <sstream>
 
+float Vec3::dot(const Vec3& a, const Vec3& b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 float Vec3::length_squared() const
 {
-    return x * x + y * y + z * z;
+    return dot(*this, *this);
 }
 
 float Vec3::length() const
