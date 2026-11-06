@@ -40,6 +40,17 @@ namespace pathtracer
         };
     }
 
+    Color Renderer::handle_hit(const HitRecord& hit, int bounce) const
+    {
+        const Material& material = hit.object.material;
+        switch (material.type)
+        {
+            case MaterialType::Diffuse:
+                return tint(diffuse_color(hit, bounce), material.albedo);
+        }
+        return Color{0, 0, 0};
+    }
+
     Color Renderer::diffuse_color(const HitRecord& hit, int bounce) const
     {
         if (bounce <= 0)
@@ -54,15 +65,7 @@ namespace pathtracer
         const std::optional<HitRecord> next_hit = closest_hit(sample, scene_);
         if (next_hit)
         {
-            const Sphere& obj = next_hit->object;
-            switch (obj.material.type)
-            {
-                case MaterialType::Diffuse:
-                    return tint(
-                        diffuse_color(*next_hit, bounce - 1),
-                        obj.material.albedo
-                    );
-            }
+            return handle_hit(*next_hit, bounce - 1);
         }
         else
         {
@@ -71,7 +74,6 @@ namespace pathtracer
 
         return Color{0, 0, 0};
     }
-
 
     Image Renderer::render() const
     {
@@ -89,18 +91,7 @@ namespace pathtracer
 
                     if (hit)
                     {
-                        Sphere obj = hit->object;
-                        switch (obj.material.type)
-                        {
-                            case MaterialType::Diffuse:
-                                color += tint(
-                                    diffuse_color(*hit),
-                                    obj.material.albedo
-                                );
-                                break;
-                            default:
-                                break;
-                        }
+                        color += handle_hit(*hit);
                     }
                     else
                     {

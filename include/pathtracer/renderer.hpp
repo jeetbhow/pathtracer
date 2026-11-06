@@ -25,6 +25,7 @@ namespace pathtracer
 
         Image render() const;
     private:
+        Color handle_hit(const HitRecord& hit, int bounce = 8) const;
         Color diffuse_color(const HitRecord& hit, int bounce = 8) const;
 
         Scene scene_;
