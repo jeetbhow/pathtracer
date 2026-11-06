@@ -6,6 +6,20 @@ namespace pathtracer
 {
     namespace
     {
+        std::optional<HitRecord> closest_hit(const Ray& ray, const Scene& scene)
+        {
+            std::optional<HitRecord> closest;
+            for (const Sphere& sphere : scene.spheres)
+            {
+                const std::optional<HitRecord> hit = sphere.hit(ray);
+                if (hit && (!closest || hit->t < closest->t))
+                {
+                    closest = hit;
+                }
+            }
+            return closest;
+        }
+
         Color skybox_color(const Ray& ray)
         {
             const Vec3 unit_direction = ray.direction().normalized();
@@ -24,7 +38,7 @@ namespace pathtracer
         }
     }
 
-    Image render(const Camera& camera, const Sphere& sphere)
+    Image render(const Camera& camera, const Scene& scene)
     {
         Image image{camera.width(), camera.height()};
         for (std::size_t row = 0; row < camera.height(); ++row)
@@ -32,7 +46,7 @@ namespace pathtracer
             for (std::size_t col = 0; col < camera.width(); ++col)
             {
                 const Ray ray = camera.generate_ray(row, col);
-                const std::optional<HitRecord> hit = sphere.hit(ray);
+                const std::optional<HitRecord> hit = closest_hit(ray, scene);
 
                 if (hit)
                 {

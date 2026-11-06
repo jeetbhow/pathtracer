@@ -16,7 +16,7 @@ On Windows, run `build\pathtracer.exe`.
 With Make installed, you can also build and run with `make run`, or build and
 run the tests with `make test`. Both commands set up the build directory if needed.
 
-The executable entry point is `app/main.cpp`. It sets up the camera and sphere,
+The executable entry point is `app/main.cpp`. It sets up the camera and scene,
 calls the renderer, and writes `image.ppm` in the working directory.
 
 Library sources live in `src/`, with public headers in `include/pathtracer/`.
@@ -28,7 +28,8 @@ use the `pathtracer` namespace. Add new source files to `src/meson.build`.
   surface normals.
 - `camera` generates rays from camera settings and image dimensions.
 - `image` stores pixels and writes PPM output.
-- `renderer` handles the pixel loop, sphere shading, and sky background.
+- `renderer` defines `Scene`, a collection of spheres, and handles nearest-hit
+  selection, the pixel loop, sphere shading, and the sky background.
 
 Google Test in `test/` links against the same pathtracer library as the executable.
 Test files follow the library component names; register new files in

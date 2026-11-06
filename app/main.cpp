@@ -11,8 +11,13 @@ int main()
     const std::size_t IMG_HEIGHT = 225;
 
     const Camera camera{IMG_WIDTH, IMG_HEIGHT};
-    const Sphere sphere{Vec3{0, 0, -3}, 1.0f};
-    const Image img = render(camera, sphere);
+    const Scene scene
+    {
+        {
+            Sphere{Vec3{0, 0, -3}, 1.0f}
+        }
+    };
+    const Image img = render(camera, scene);
 
     std::ofstream ofs{"image.ppm"};
     if (!ofs)
