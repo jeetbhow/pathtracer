@@ -84,6 +84,20 @@ TEST(Sphere, ReturnsNoHitForMissBackwardOrStationaryRay)
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, 0}}).has_value());
 }
 
+TEST(Sphere, PreservesSmallRadiusAtLargeDistance)
+{
+    const Sphere sphere{Vec3{0, 0, -10000}, 1};
+    const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}});
+    ASSERT_TRUE(hit.has_value());
+    EXPECT_FLOAT_EQ(hit->t, 9999.0f);
+    EXPECT_FLOAT_EQ(hit->position.z, -9999.0f);
+    EXPECT_FLOAT_EQ(hit->normal.z, 1.0f);
+    EXPECT_FLOAT_EQ(hit->normal.length(), 1.0f);
+
+    // Cancellation must not turn a nearby miss into a tangent hit, either.
+    EXPECT_FALSE(sphere.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}).has_value());
+}
+
 TEST(Sphere, InteriorReflectionStaysInTheShadingHemisphere)
 {
     const Sphere sphere{Vec3{0, 0, 0}, 2};

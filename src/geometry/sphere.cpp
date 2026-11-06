@@ -34,41 +34,46 @@ namespace pathtracer
 
     std::optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
     {
-        const Vec3 offset = ray.origin() - center_;
         const Vec3& direction = ray.direction();
-        const float a = direction.length_squared();
-        const float half_b = Vec3::dot(offset, direction);
-        const float c = offset.length_squared() - radius_ * radius_;
-        const float discriminant = half_b * half_b - a * c;
+        // Promote before arithmetic so small radii survive at large distances.
+        const double dx = direction.x;
+        const double dy = direction.y;
+        const double dz = direction.z;
+        const double ox = static_cast<double>(ray.origin().x) - center_.x;
+        const double oy = static_cast<double>(ray.origin().y) - center_.y;
+        const double oz = static_cast<double>(ray.origin().z) - center_.z;
+        const double a = dx * dx + dy * dy + dz * dz;
+        const double half_b = ox * dx + oy * dy + oz * dz;
+        const double c = ox * ox + oy * oy + oz * oz
+                         - static_cast<double>(radius_) * radius_;
+        const double discriminant = half_b * half_b - a * c;
 
         if (a == 0.0f || discriminant < 0.0f)
         {
             return std::nullopt;
         }
 
-        const auto make_hit = [&](float t)
+        const double root = std::sqrt(discriminant);
+        double t = (-half_b - root) / a;
+
+        if (t <= t_min)
         {
-            const Vec3 position = ray.at(t);
-            const Vec3 outward_normal = normal(position);
-            const Vec3 shading_normal = Vec3::dot(direction, outward_normal) > 0.0f
-                                        ? -1.0f * outward_normal : outward_normal;
-            return HitRecord{t, position, shading_normal, *this, ray};
+            t = (-half_b + root) / a;
+            if (t <= t_min)
+            {
+                return std::nullopt;
+            }
+        }
+
+        const Vec3 position
+        {
+            static_cast<float>(ray.origin().x + t * dx),
+            static_cast<float>(ray.origin().y + t * dy),
+            static_cast<float>(ray.origin().z + t * dz)
         };
-
-        const float root = std::sqrt(discriminant);
-        const float near = (-half_b - root) / a;
-
-        if (near > t_min)
-        {
-            return make_hit(near);
-        }
-
-        const float far = (-half_b + root) / a;
-        if (far > t_min)
-        {
-            return make_hit(far);
-        }
-
-        return std::nullopt;
+        const Vec3 outward_normal = normal(position);
+        const Vec3 shading_normal = Vec3::dot(direction, outward_normal) > 0.0f
+                                    ? -1.0f * outward_normal : outward_normal;
+        return HitRecord{static_cast<float>(t), position, shading_normal, *this, ray};
     }
 } // namespace pathtracer
