@@ -26,4 +26,29 @@ namespace pathtracer
         return len == 0.0f ? Vec3{0.0f, 0.0f, 0.0f} : *this / len;
     }
 
+    Vec3 operator+(const Vec3& a, const Vec3& b)
+    {
+        return Vec3{a.x + b.x, a.y + b.y, a.z + b.z};
+    }
+
+    Vec3 operator-(const Vec3& a, const Vec3& b)
+    {
+        return Vec3{a.x - b.x, a.y - b.y, a.z - b.z};
+    }
+
+    Vec3 operator*(const Vec3& a, float scalar)
+    {
+        return Vec3{a.x * scalar, a.y * scalar, a.z * scalar};
+    }
+
+    Vec3 operator*(float scalar, const Vec3& a)
+    {
+        return a * scalar;
+    }
+
+    Vec3 operator/(const Vec3& a, float scalar)
+    {
+        return a * (1.0f / scalar);
+    }
+
 } // namespace pathtracer
