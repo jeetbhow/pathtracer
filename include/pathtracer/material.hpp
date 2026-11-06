@@ -14,5 +14,6 @@ namespace pathtracer
     {
         MaterialType type = MaterialType::Diffuse;
         Vec3 albedo{0.5f, 0.5f, 0.5f};
+        float roughness = 0.0f;
     };
 } // namespace pathtracer

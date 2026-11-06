@@ -1,10 +1,12 @@
 #include "pathtracer/renderer.hpp"
+#include "pathtracer/geometry/hit_record.hpp"
 #include "pathtracer/geometry/sphere.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
+#include <algorithm>
 #include <optional>
-#include <random>
 
+using std::optional;
 using std::vector;
 
 namespace pathtracer
@@ -54,19 +56,29 @@ namespace pathtracer
             case MaterialType::Metal:
                 if (bounces_remaining_ < 0) return Color{0, 0, 0};
                 direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
+
+                if (material.roughness > 0.0f)
+                {
+                    direction = direction + material.roughness * Sphere::random_vector(generator_);
+                }
+
+                if (Vec3::dot(direction, hit.normal) <= 0.0f)
+                    return Color{0, 0, 0};
+
+                direction = direction.normalized();
                 break;
             default:
                 return Color{0, 0, 0};
         }
 
         const Ray scattered{hit.position, direction};
-        const auto next = closest_hit(scattered, scene_);
-        
-        if (!next) 
+        optional<HitRecord> next = closest_hit(scattered, scene_);
+
+        if (!next)
         {
             return tint(skybox_color(scattered), material.albedo);
         }
-        
+
         --bounces_remaining_;
         return tint(handle_hit(*next), material.albedo);
     }
