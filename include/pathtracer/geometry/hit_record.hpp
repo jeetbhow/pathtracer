@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pathtracer/geometry/vec3.hpp"
+#include "pathtracer/geometry/ray.hpp"
 
 namespace pathtracer
 {
@@ -12,5 +12,6 @@ namespace pathtracer
         Vec3 position;
         Vec3 normal;
         const Sphere& object;
+        Ray incoming;
     };
 } // namespace pathtracer
