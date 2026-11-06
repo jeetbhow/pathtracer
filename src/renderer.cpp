@@ -61,9 +61,9 @@ namespace pathtracer
                     if (hit)
                     {
                         Sphere obj = hit->object;
-                        switch (obj.material)
+                        switch (obj.material.type)
                         {
-                            case Material::Diffuse:
+                            case MaterialType::Diffuse:
 
                                 break;
                             default:

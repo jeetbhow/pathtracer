@@ -2,16 +2,12 @@
 
 #include "pathtracer/geometry/ray.hpp"
 #include "pathtracer/geometry/hit_record.hpp"
+#include "pathtracer/material.hpp"
 
 #include <optional>
 
 namespace pathtracer
 {
-    enum class Material
-    {
-        Diffuse,
-    };
-
     class Sphere
     {
     public:
@@ -22,7 +18,7 @@ namespace pathtracer
         std::optional<HitRecord> hit(const Ray& ray) const;
         Vec3 normal(const Vec3& p) const;
         
-        Material material = Material::Diffuse;
+        Material material{};
     private:
         float radius_;
         Vec3 center_;
