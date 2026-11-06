@@ -46,20 +46,27 @@ namespace pathtracer
             return std::nullopt;
         }
 
+        const auto make_hit = [&](float t)
+        {
+            const Vec3 position = ray.at(t);
+            const Vec3 outward_normal = normal(position);
+            const Vec3 shading_normal = Vec3::dot(direction, outward_normal) > 0.0f
+                                        ? -1.0f * outward_normal : outward_normal;
+            return HitRecord{t, position, shading_normal, *this, ray};
+        };
+
         const float root = std::sqrt(discriminant);
         const float near = (-half_b - root) / a;
 
         if (near > t_min)
         {
-            const Vec3 position = ray.at(near);
-            return HitRecord{near, position, normal(position), *this, ray};
+            return make_hit(near);
         }
 
         const float far = (-half_b + root) / a;
         if (far > t_min)
         {
-            const Vec3 position = ray.at(far);
-            return HitRecord{far, position, normal(position), *this, ray};
+            return make_hit(far);
         }
 
         return std::nullopt;

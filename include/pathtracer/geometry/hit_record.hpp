@@ -10,7 +10,7 @@ namespace pathtracer
     {
         float t;
         Vec3 position;
-        Vec3 normal;
+        Vec3 normal; // Shading normal, oriented against the incoming ray.
         const Sphere& object;
         Ray incoming;
     };
