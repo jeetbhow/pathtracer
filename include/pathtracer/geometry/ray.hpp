@@ -4,14 +4,23 @@
 
 #include <string>
 
-namespace pathtracer {
+namespace pathtracer
+{
     class Ray
     {
     public:
-        Ray(const Vec3& origin, const Vec3& direction) : origin_(origin), direction_(direction) {}
+        Ray(const Vec3& origin, const Vec3& direction) : origin_(origin), direction_(direction)
+        {
+        }
 
-        const Vec3 &direction() const { return direction_; }
-        const Vec3 &origin() const { return origin_; }
+        const Vec3 &direction() const
+        {
+            return direction_;
+        }
+        const Vec3 &origin() const
+        {
+            return origin_;
+        }
 
         std::string to_string() const;
 

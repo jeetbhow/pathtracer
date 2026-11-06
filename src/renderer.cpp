@@ -1,6 +1,7 @@
 #include "pathtracer/renderer.hpp"
 
-namespace pathtracer {
+namespace pathtracer
+{
     Color skybox_color(const Ray& ray)
     {
         const Vec3 unit_direction = ray.direction().normalized();

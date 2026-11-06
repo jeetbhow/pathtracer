@@ -4,14 +4,20 @@
 
 #include <optional>
 
-namespace pathtracer {
+namespace pathtracer
+{
     class Sphere
     {
     public:
-        Sphere(const Vec3& center, float radius) : radius_(radius), center_(center) {}
+        Sphere(const Vec3& center, float radius) : radius_(radius), center_(center)
+        {
+        }
 
         std::optional<float> hit(const Ray& ray) const;
-        constexpr Vec3 normal(const Vec3& p) const { return (p - center_) / radius_; }
+        constexpr Vec3 normal(const Vec3& p) const
+        {
+            return (p - center_) / radius_;
+        }
     private:
         float radius_;
         Vec3 center_;

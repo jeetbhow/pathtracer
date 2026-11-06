@@ -4,9 +4,10 @@
 #include "pathtracer/image.hpp"
 #include "pathtracer/geometry/sphere.hpp"
 
-namespace pathtracer {
+namespace pathtracer
+{
 
-Color skybox_color(const Ray& ray);
-Image render(const Camera& camera, const Sphere& sphere);
+    Color skybox_color(const Ray& ray);
+    Image render(const Camera& camera, const Sphere& sphere);
 
 } // namespace pathtracer
