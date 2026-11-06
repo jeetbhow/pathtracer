@@ -28,6 +28,16 @@ TEST(Camera, GenerateRayThroughImageCenterPointsForward)
     EXPECT_LT(direction.z, 0.0f);
 }
 
+TEST(Camera, GenerateRaySamplesPixelCenterAtImageAspectRatio)
+{
+    const Camera camera{7, 3};
+    const Vec3 direction = camera.generate_ray(0, 0).direction();
+
+    EXPECT_NEAR(direction.x, -2.0f, 1e-6f);
+    EXPECT_NEAR(direction.y, 2.0f / 3.0f, 1e-6f);
+    EXPECT_FLOAT_EQ(direction.z, -1.0f);
+}
+
 TEST(Camera, GenerateRayColumnsSpanLeftToRightSymmetrically)
 {
     Camera camera{7, 3};

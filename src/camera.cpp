@@ -11,23 +11,26 @@ namespace pathtracer
         {
             throw std::invalid_argument("Camera image dimensions must be nonzero");
         }
+
+        const float viewport_height = 2.0f;
+        const float focal_length = 1.0f;
+        const float aspect_ratio = static_cast<float>(width_) / static_cast<float>(height_);
+        const Vec3 viewport_u{viewport_height * aspect_ratio, 0, 0};
+        const Vec3 viewport_v{0, -viewport_height, 0};
+        const Vec3 viewport_center = origin_ + Vec3{0, 0, -focal_length};
+
+        pixel_du_ = viewport_u / static_cast<float>(width_);
+        pixel_dv_ = viewport_v / static_cast<float>(height_);
+        pixel00_ = viewport_center - viewport_u / 2 - viewport_v / 2;
     }
 
     Ray Camera::generate_ray(std::size_t row, std::size_t col) const
     {
-        const float jitter = 0.5f;
-        const float aspect_ratio = static_cast<float>(width_) / static_cast<float>(height_);
+        const float pixel_center_offset = 0.5f;
+        const Vec3 pixel_center = pixel00_ + pixel_dv_ * (row + pixel_center_offset)
+                                 + pixel_du_ * (col + pixel_center_offset);
 
-        Vec3 vp_u = Vec3{vp_height_ * aspect_ratio, 0, 0};
-        Vec3 vp_v = Vec3{0, -vp_height_, 0};
-        Vec3 pixel_du = vp_u / static_cast<float>(width_);
-        Vec3 pixel_dv = vp_v / static_cast<float>(height_);
-        Vec3 center = origin_ + Vec3{0, 0, -focal_len_};
-        Vec3 pixel00 = center - vp_u / 2 - vp_v / 2;
-
-        Vec3 pixel_center = pixel00 + pixel_dv * (row + jitter) + pixel_du * (col + jitter);
-
-        return Ray { origin_, pixel_center };
+        return Ray{origin_, pixel_center - origin_};
     }
 
 } // namespace pathtracer

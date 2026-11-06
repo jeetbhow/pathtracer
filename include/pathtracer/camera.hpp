@@ -26,8 +26,9 @@ namespace pathtracer
         Vec3 origin_ = Vec3{0, 0, 0};
         std::size_t width_;
         std::size_t height_;
-        float vp_height_ = 2.0f;
-        float focal_len_ = 1.0f;
+        Vec3 pixel00_;
+        Vec3 pixel_du_;
+        Vec3 pixel_dv_;
     };
 
 } // namespace pathtracer
