@@ -10,7 +10,7 @@ int main()
     const std::size_t IMG_WIDTH = 400;
     const std::size_t IMG_HEIGHT = 225;
 
-    const Camera camera{IMG_WIDTH, IMG_HEIGHT, 16};
+    const Camera camera{IMG_WIDTH, IMG_HEIGHT, 32};
     Sphere metal_sphere{Vec3{1.7f, -0.2f, -3.5f}, 0.8f};
     metal_sphere.material = Material{MaterialType::Metal, Vec3{0.8f, 0.6f, 0.2f}};
     const Scene scene

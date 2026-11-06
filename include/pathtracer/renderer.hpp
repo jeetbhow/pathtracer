@@ -25,10 +25,10 @@ namespace pathtracer
 
         Image render() const;
     private:
-        Color handle_hit(const HitRecord& hit, int bounce = 8) const;
-        Color diffuse_color(const HitRecord& hit, int bounce = 8) const;
-        Color reflect_color(const HitRecord& hit, int bounce = 8) const;
+        Color handle_hit(const HitRecord& hit) const;
 
+        const int max_bounces_ = 8;
+        mutable int bounces_remaining_ = max_bounces_;
         Scene scene_;
         Camera camera_;
         mutable std::mt19937 generator_;

@@ -40,64 +40,35 @@ namespace pathtracer
         };
     }
 
-    Color Renderer::handle_hit(const HitRecord& hit, int bounce) const
+    Color Renderer::handle_hit(const HitRecord& hit) const
     {
         const Material& material = hit.object.material;
+        Vec3 direction;
+
         switch (material.type)
         {
             case MaterialType::Diffuse:
-                return tint(diffuse_color(hit, bounce), material.albedo);
+                if (bounces_remaining_ <= 0) return Color{0, 0, 0};
+                direction = (hit.normal + Sphere::random_vector(generator_)).normalized();
+                break;
             case MaterialType::Metal:
-                return tint(reflect_color(hit, bounce), material.albedo);
+                if (bounces_remaining_ < 0) return Color{0, 0, 0};
+                direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
+                break;
+            default:
+                return Color{0, 0, 0};
         }
-        return Color{0, 0, 0};
-    }
 
-    Color Renderer::diffuse_color(const HitRecord& hit, int bounce) const
-    {
-        if (bounce <= 0)
+        const Ray scattered{hit.position, direction};
+        const auto next = closest_hit(scattered, scene_);
+        
+        if (!next) 
         {
-            return Color{0, 0, 0};
+            return tint(skybox_color(scattered), material.albedo);
         }
-
-        Vec3 rnd = Sphere::random_vector(generator_);
-        Vec3 sample_direction = (hit.normal + rnd).normalized();
-        Ray sample{hit.position, sample_direction};
-
-        const std::optional<HitRecord> next_hit = closest_hit(sample, scene_);
-        if (next_hit)
-        {
-            return handle_hit(*next_hit, bounce - 1);
-        }
-        else
-        {
-            return skybox_color(sample);
-        }
-
-        return Color{0, 0, 0};
-    }
-
-    Color Renderer::reflect_color(const HitRecord& hit, int bounce) const
-    {
-        if (bounce < 0) 
-        {
-            return Color{0, 0, 0};
-        }
-
-        Vec3 refl_direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
-        Ray refl = Ray{hit.position, refl_direction};
-    
-        const std::optional<HitRecord> next_hit = closest_hit(refl, scene_);
-        if (next_hit)
-        {
-            return handle_hit(*next_hit, bounce - 1);
-        }
-        else
-        {
-            return skybox_color(refl);
-        }
-
-        return Color{};
+        
+        --bounces_remaining_;
+        return tint(handle_hit(*next), material.albedo);
     }
 
     Image Renderer::render() const
@@ -116,6 +87,7 @@ namespace pathtracer
 
                     if (hit)
                     {
+                        bounces_remaining_ = max_bounces_;
                         color += handle_hit(*hit);
                     }
                     else
