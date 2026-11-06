@@ -14,7 +14,10 @@ int main()
     const Scene scene
     {
         {
-            Sphere{Vec3{0, 0, -3}, 1.0f}
+            Sphere{Vec3{0, 0, -3}, 1.0f},
+            Sphere{Vec3{-1.6f, -0.4f, -2.5f}, 0.6f},
+            Sphere{Vec3{1.7f, -0.2f, -3.5f}, 0.8f},
+            Sphere{Vec3{0, -101, -3}, 100.0f}
         }
     };
     const Image img = render(camera, scene);
