@@ -94,12 +94,11 @@ namespace pathtracer
         }
         else
         {
-            return skybox_color(hit.incoming);
+            return skybox_color(refl);
         }
 
         return Color{};
     }
-
 
     Image Renderer::render() const
     {
