@@ -10,7 +10,7 @@ int main()
     const std::size_t IMG_WIDTH = 400;
     const std::size_t IMG_HEIGHT = 225;
 
-    const Camera camera{IMG_WIDTH, IMG_HEIGHT};
+    const Camera camera{IMG_WIDTH, IMG_HEIGHT, 16};
     const Scene scene
     {
         {

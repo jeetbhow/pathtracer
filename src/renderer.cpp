@@ -2,6 +2,8 @@
 
 #include <optional>
 
+using std::vector;
+
 namespace pathtracer
 {
     namespace
@@ -45,17 +47,24 @@ namespace pathtracer
         {
             for (std::size_t col = 0; col < camera.width(); ++col)
             {
-                const Ray ray = camera.generate_ray(row, col);
-                const std::optional<HitRecord> hit = closest_hit(ray, scene);
+                const vector<Ray> rays = camera.generate_rays(row, col);
+                Color color{0, 0, 0};
 
-                if (hit)
+                for (const Ray& ray : rays)
                 {
-                    image.set_pixel(row, col, normal_color(hit->normal));
+                    const std::optional<HitRecord> hit = closest_hit(ray, scene);
+
+                    if (hit)
+                    {
+                        color += normal_color(hit->normal);
+                    }
+                    else
+                    {
+                        color += skybox_color(ray);
+                    }
                 }
-                else
-                {
-                    image.set_pixel(row, col, skybox_color(ray));
-                }
+
+                image.set_pixel(row, col, color / camera.samples_per_pixel());
             }
         }
         return image;

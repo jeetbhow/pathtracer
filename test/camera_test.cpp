@@ -11,6 +11,19 @@ TEST(Camera, RejectsZeroDimensions)
     EXPECT_THROW((Camera{7, 0}), std::invalid_argument);
 }
 
+TEST(Camera, RejectsNonpositiveSampleCounts)
+{
+    EXPECT_THROW((Camera{7, 3, 0, 42}), std::invalid_argument);
+    EXPECT_THROW((Camera{7, 3, -1, 42}), std::invalid_argument);
+}
+
+TEST(Camera, GeneratesConfiguredNumberOfSamplesPerPixel)
+{
+    const Camera camera{7, 3, 5, 42};
+    EXPECT_EQ(camera.samples_per_pixel(), 5);
+    EXPECT_EQ(camera.generate_rays(1, 3).size(), 5u);
+}
+
 // Pixels are sampled at their centers; the camera looks along -Z with +Y up.
 // A non-square image also helps catch swapped row/column or width/height usage.
 TEST(Camera, GenerateRayThroughImageCenterPointsForward)
