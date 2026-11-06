@@ -4,7 +4,9 @@
 #include <iosfwd>
 #include <vector>
 
-#include "geometry.hpp"
+#include "pathtracer/geometry/vec3.hpp"
+
+namespace pathtracer {
 
 using Color = Vec3;
 
@@ -25,3 +27,5 @@ private:
     std::size_t height_ = 0;
     std::vector<Color> pixels_;
 };
+
+} // namespace pathtracer

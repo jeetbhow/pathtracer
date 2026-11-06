@@ -1,7 +1,10 @@
 lib_sources = files(
-  'geometry.cpp',
+  'geometry/vec3.cpp',
+  'geometry/ray.cpp',
+  'geometry/sphere.cpp',
   'image.cpp',
-  'scene.cpp',
+  'camera.cpp',
+  'renderer.cpp',
 )
 
 pathtracer_lib = static_library(

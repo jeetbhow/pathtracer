@@ -15,7 +15,7 @@ subdir('test')
 
 executable(
   'pathtracer',
-  'main.cpp',
+  'app/main.cpp',
   dependencies: pathtracer_dep,
   install: true,
 )

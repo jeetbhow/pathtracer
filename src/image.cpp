@@ -1,10 +1,12 @@
-#include "image.hpp"
+#include "pathtracer/image.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
+
+namespace pathtracer {
 
 static int channel_value(float value)
 {
@@ -47,3 +49,5 @@ void Image::write_ppm(std::ostream& output) const
                << channel_value(pixel.z) << '\n';
     }
 }
+
+} // namespace pathtracer

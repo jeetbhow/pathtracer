@@ -1,27 +1,21 @@
-#include "scene.hpp"
+#include "pathtracer/camera.hpp"
 
 #include <gtest/gtest.h>
+#include <stdexcept>
 
-TEST(Scene, RayColorBlendsSkyFromWhiteToBlue)
+using namespace pathtracer;
+
+TEST(Camera, RejectsZeroDimensions)
 {
-    const Vec3 origin{0, 0, 0};
-    const Color down = skybox_color(Ray{origin, Vec3{0, -2, 0}});
-    const Color up = skybox_color(Ray{origin, Vec3{0, 2, 0}});
-
-    EXPECT_FLOAT_EQ(down.x, 1.0f);
-    EXPECT_FLOAT_EQ(down.y, 1.0f);
-    EXPECT_FLOAT_EQ(down.z, 1.0f);
-    EXPECT_FLOAT_EQ(up.x, 0.5f);
-    EXPECT_FLOAT_EQ(up.y, 0.7f);
-    EXPECT_FLOAT_EQ(up.z, 1.0f);
+    EXPECT_THROW((Camera{0, 3}), std::invalid_argument);
+    EXPECT_THROW((Camera{7, 0}), std::invalid_argument);
 }
 
 // Pixels are sampled at their centers; the camera looks along -Z with +Y up.
 // A non-square image also helps catch swapped row/column or width/height usage.
 TEST(Camera, GenerateRayThroughImageCenterPointsForward)
 {
-    Image image{7, 3};
-    Camera camera{image};
+    Camera camera{7, 3};
 
     const Ray ray = camera.generate_ray(1, 3);
     const Vec3 direction = ray.direction();
@@ -36,8 +30,7 @@ TEST(Camera, GenerateRayThroughImageCenterPointsForward)
 
 TEST(Camera, GenerateRayColumnsSpanLeftToRightSymmetrically)
 {
-    Image image{7, 3};
-    Camera camera{image};
+    Camera camera{7, 3};
 
     const Vec3 left = camera.generate_ray(1, 0).direction();
     const Vec3 right = camera.generate_ray(1, 6).direction();
@@ -53,8 +46,7 @@ TEST(Camera, GenerateRayColumnsSpanLeftToRightSymmetrically)
 
 TEST(Camera, GenerateRayRowsSpanTopToBottomSymmetrically)
 {
-    Image image{7, 3};
-    Camera camera{image};
+    Camera camera{7, 3};
 
     const Vec3 top = camera.generate_ray(0, 3).direction();
     const Vec3 bottom = camera.generate_ray(2, 3).direction();

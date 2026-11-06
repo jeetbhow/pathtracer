@@ -1,8 +1,10 @@
-#include "image.hpp"
+#include "pathtracer/image.hpp"
 
 #include <gtest/gtest.h>
 #include <sstream>
 #include <stdexcept>
+
+using namespace pathtracer;
 
 TEST(Image, WritesPixelsInRowMajorPpmFormat)
 {

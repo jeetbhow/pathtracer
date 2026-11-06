@@ -13,7 +13,21 @@ meson test -C build
 
 On Windows, run `build\pathtracer.exe`.
 
-Put library sources in `src/`, public headers in `include/`, and add source files
-to the build file in `src/`. The root `main.cpp` links against the same library.
+The executable entry point is `app/main.cpp`. It sets up the camera and sphere,
+calls the renderer, and writes `image.ppm` in the working directory.
 
-Google Test in `test/` links against the pathtracer library. Meson uses an installed Google Test or downloads the pinned fallback in `subprojects/gtest.wrap` (internet access required). Tests use C++23.
+Library sources live in `src/`, with public headers in `include/pathtracer/`.
+Include them as `"pathtracer/camera.hpp"`, for example; library types and functions
+use the `pathtracer` namespace. Add new source files to `src/meson.build`.
+
+- `geometry/` groups `vec3`, `ray`, and `sphere` in both the public headers and
+  library sources. They provide vector math, rays, sphere intersections, and
+  surface normals.
+- `camera` generates rays from camera settings and image dimensions.
+- `image` stores pixels and writes PPM output.
+- `renderer` handles the pixel loop, sphere shading, and sky background.
+
+Google Test in `test/` links against the same pathtracer library as the executable.
+Test files follow the library component names; register new files in
+`test/meson.build`. Meson uses an installed Google Test or downloads the pinned
+fallback in `subprojects/gtest.wrap` (internet access required). Tests use C++23.

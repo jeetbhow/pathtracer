@@ -2,7 +2,9 @@ gtest_dep = dependency('gtest', main: true, fallback: ['gtest', 'gtest_main_dep'
 
 test_sources = files(
   'camera_test.cpp',
-  'geometry_test.cpp',
+  'vec3_test.cpp',
+  'sphere_test.cpp',
+  'renderer_test.cpp',
   'image_test.cpp',
 )
 
