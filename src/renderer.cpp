@@ -7,7 +7,6 @@
 #include <random>
 
 using std::optional;
-using std::vector;
 
 namespace pathtracer
 {
@@ -88,18 +87,18 @@ namespace pathtracer
         return tint(handle_hit(*next), material.albedo);
     }
 
-    Image Renderer::render() const
+    Image& Renderer::render() const
     {
-        Image image{camera_.width(), camera_.height()};
-        for (std::size_t row = 0; row < camera_.height(); ++row)
+        Image& image = camera_.image;
+        for (std::size_t row = 0; row < image.height; ++row)
         {
-            for (std::size_t col = 0; col < camera_.width(); ++col)
+            for (std::size_t col = 0; col < image.width; ++col)
             {
-                const vector<Ray> rays = camera_.generate_rays(row, col, generator_);
                 Color color{0, 0, 0};
 
-                for (const Ray& ray : rays)
+                for (unsigned int sample = 0; sample < camera_.samples; ++sample)
                 {
+                    const Ray ray = camera_.generate_ray(row, col, generator_);
                     const std::optional<HitRecord> hit = closest_hit(ray, scene_);
 
                     if (hit)
@@ -113,7 +112,7 @@ namespace pathtracer
                     }
                 }
 
-                image.set_pixel(row, col, color / camera_.samples_per_pixel());
+                image.set_pixel(row, col, color / camera_.samples);
             }
         }
         return image;

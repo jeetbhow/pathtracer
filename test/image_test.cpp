@@ -1,10 +1,15 @@
-#include "pathtracer/image.hpp"
+#include "pathtracer/camera/image.hpp"
 
 #include <gtest/gtest.h>
 #include <sstream>
 #include <stdexcept>
+#include <type_traits>
 
 using namespace pathtracer;
+
+// Replacing a referenced Image would invalidate the Camera's cached geometry.
+static_assert(!std::is_copy_assignable_v<Image>);
+static_assert(!std::is_move_assignable_v<Image>);
 
 TEST(Image, RejectsInvalidCoordinatesAndEmptyOutput)
 {

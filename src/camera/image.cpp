@@ -1,4 +1,4 @@
-#include "pathtracer/image.hpp"
+#include "pathtracer/camera/image.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -26,7 +26,7 @@ namespace pathtracer
         return rgb;
     }
 
-    Image::Image(std::size_t width, std::size_t height) : width_(width), height_(height)
+    Image::Image(std::size_t width, std::size_t height) : width(width), height(height)
     {
         if (height != 0 && width > std::numeric_limits<std::size_t>::max() / height)
         {
@@ -37,21 +37,21 @@ namespace pathtracer
 
     void Image::set_pixel(std::size_t row, std::size_t col, const Color& color)
     {
-        if (row >= height_ || col >= width_)
+        if (row >= height || col >= width)
         {
             throw std::out_of_range("Pixel coordinates are outside the image");
         }
-        pixels_[row * width_ + col] = color;
+        pixels_[row * width + col] = color;
     }
 
     void Image::write_ppm(std::ostream& output) const
     {
-        if (width_ == 0 || height_ == 0)
+        if (width == 0 || height == 0)
         {
             throw std::logic_error("Cannot write an empty image");
         }
 
-        output << "P3\n" << width_ << ' ' << height_ << "\n255\n";
+        output << "P3\n" << width << ' ' << height << "\n255\n";
         for (const Color& pixel : pixels_)
         {
             output << channel_value(pixel.x) << ' ' << channel_value(pixel.y) << ' '

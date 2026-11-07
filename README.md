@@ -20,14 +20,14 @@ The executable entry point is `app/main.cpp`. It sets up the camera and scene,
 calls the renderer, and writes `image.ppm` in the working directory.
 
 Library sources live in `src/`, with public headers in `include/pathtracer/`.
-Include them as `"pathtracer/camera.hpp"`, for example; library types and functions
+Include them as `"pathtracer/camera/camera.hpp"`, for example; library types and functions
 use the `pathtracer` namespace. Add new source files to `src/meson.build`.
 
 - `geometry/` groups `vec3`, `ray`, and `sphere` in both the public headers and
   library sources. They provide vector math, rays, sphere intersections, and
   surface normals.
-- `camera` generates rays from camera settings and image dimensions.
-- `image` stores pixels and writes PPM output.
+- `camera/` groups `camera`, which generates rays from camera settings and image
+  dimensions, and `image`, which stores pixels and writes PPM output.
 - `renderer` defines `Scene`, a collection of spheres, and handles nearest-hit
   selection, the pixel loop, sphere shading, and the sky background.
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pathtracer/camera.hpp"
-#include "pathtracer/image.hpp"
+#include "pathtracer/camera/camera.hpp"
+#include "pathtracer/camera/image.hpp"
 #include "pathtracer/geometry/sphere.hpp"
 
 #include <vector>
@@ -23,7 +23,7 @@ namespace pathtracer
         {
         }
 
-        Image render() const;
+        Image& render() const;
     private:
         Color handle_hit(const HitRecord& hit) const;
 

@@ -14,7 +14,9 @@ TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
     Sphere enclosure{Vec3{0, 0, 0}, 2};
     enclosure.material = Material{GetParam(), Vec3{1, 1, 1}, 0};
-    const Renderer renderer{Scene{{enclosure}}, Camera{3, 3, 32}, 42};
+    Image image{3, 3};
+    const Renderer renderer{Scene{{enclosure}}, Camera{image, 32}, 42};
+    EXPECT_EQ(&renderer.render(), &image);
     std::ostringstream output;
     renderer.render().write_ppm(output);
 
