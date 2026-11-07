@@ -33,6 +33,10 @@ use the `pathtracer` namespace. Add new source files to `src/meson.build`.
 - `renderer` defines `Scene`, a collection of objects, and handles nearest-hit
   selection, the pixel loop, sphere shading, and the sky background.
 
+Scene owns its objects, and each object owns its material. Renderer references
+Scene rather than copying it, so Scene must outlive every Renderer using it.
+Materials must also outlive any hit records that reference them.
+
 Google Test in `test/` links against the same pathtracer library as the executable.
 Test files follow the library component names; register new files in
 `test/meson.build`. Meson uses an installed Google Test or downloads the pinned

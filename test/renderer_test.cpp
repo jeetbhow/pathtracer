@@ -5,14 +5,14 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 
 using std::istringstream;
-using std::make_shared;
+using std::make_unique;
 using std::mt19937;
 using std::nullopt;
 using std::optional;
 using std::ostringstream;
-using std::shared_ptr;
 using std::string;
 
 using namespace pathtracer;
@@ -26,16 +26,22 @@ public:
     }
 };
 
-class EnclosedRenderer : public testing::TestWithParam<shared_ptr<const Material>>
+template <typename T>
+class EnclosedRenderer : public testing::Test
 {
 };
 
-TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
+using EnclosedMaterials = testing::Types<Diffuse, Metal, AbsorbingMaterial>;
+TYPED_TEST_SUITE(EnclosedRenderer, EnclosedMaterials);
+
+TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
-    Sphere enclosure{Vec3{0, 0, 0}, 2};
-    enclosure.material = GetParam();
+    auto enclosure = make_unique<Sphere>(Vec3{0, 0, 0}, 2);
+    enclosure->material = make_unique<TypeParam>();
+    Scene scene;
+    scene.objects.push_back(std::move(enclosure));
     Image image{3, 3};
-    const Renderer renderer{Scene{{make_shared<Sphere>(enclosure)}}, Camera{image, 32}, 42};
+    const Renderer renderer{scene, Camera{image, 32}, 42};
     EXPECT_EQ(&renderer.render(), &image);
     ostringstream output;
     renderer.render().write_ppm(output);
@@ -58,7 +64,18 @@ TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(Materials, EnclosedRenderer,
-                        testing::Values(make_shared<Diffuse>(Color{1, 1, 1}),
-                                        make_shared<Metal>(Color{1, 1, 1}, 0),
-                                        make_shared<AbsorbingMaterial>()));
+TEST(Renderer, UsesTheReferencedScene)
+{
+    Scene scene;
+    Image image{1, 1};
+    const Camera camera{image, 1};
+    const Renderer renderer{scene, camera, 42};
+
+    auto enclosure = make_unique<Sphere>(Vec3{0, 0, 0}, 2);
+    enclosure->material = make_unique<AbsorbingMaterial>();
+    scene.objects.push_back(std::move(enclosure));
+
+    ostringstream output;
+    renderer.render().write_ppm(output);
+    EXPECT_EQ(output.str(), "P3\n1 1\n255\n0 0 0\n");
+}

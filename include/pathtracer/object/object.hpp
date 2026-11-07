@@ -24,7 +24,7 @@ namespace pathtracer
     public:
         virtual ~Object() = default;
 
-        std::shared_ptr<const Material> material = std::make_shared<Diffuse>();
+        std::unique_ptr<Material> material = std::make_unique<Diffuse>();
 
         virtual std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const = 0;
         virtual Vec3 normal(const Vec3& p) const = 0;
