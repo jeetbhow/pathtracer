@@ -13,5 +13,6 @@ namespace pathtracer
         Vec3 normal; // Shading normal, oriented against the incoming ray.
         const Sphere& object;
         Ray incoming;
+        bool entering;
     };
 } // namespace pathtracer

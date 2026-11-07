@@ -3,8 +3,8 @@
 #include "pathtracer/geometry/sphere.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
-#include <algorithm>
 #include <optional>
+#include <random>
 
 using std::optional;
 using std::vector;
@@ -32,16 +32,6 @@ namespace pathtracer
         return (1.0f - t) * Color{1.0f, 1.0f, 1.0f} + t * Color{0.5f, 0.7f, 1.0f};
     }
 
-    static Color normal_color(const Vec3& normal)
-    {
-        return Color
-        {
-            (normal.x + 1.0f) / 2.0f,
-            (normal.y + 1.0f) / 2.0f,
-            (normal.z + 1.0f) / 2.0f
-        };
-    }
-
     Color Renderer::handle_hit(const HitRecord& hit) const
     {
         if (bounces_remaining_ <= 0)
@@ -50,31 +40,43 @@ namespace pathtracer
         }
 
         const Material& material = hit.object.material;
+        const Vec3 incoming = hit.incoming.direction().normalized();
+        const Vec3& normal = hit.normal;
         Vec3 direction;
 
         switch (material.type)
         {
             case MaterialType::Diffuse:
-                direction = (hit.normal + Sphere::random_vector(generator_)).normalized();
+                direction = (normal + Sphere::random_vector(generator_));
                 break;
             case MaterialType::Metal:
-                direction = Vec3::reflect(hit.incoming.direction(), hit.normal).normalized();
+                direction = Vec3::reflect(incoming, normal);
 
                 if (material.roughness > 0.0f)
                 {
                     direction = direction + material.roughness * Sphere::random_vector(generator_);
                 }
 
-                if (Vec3::dot(direction, hit.normal) <= 0.0f)
+                if (Vec3::dot(direction, normal) <= 0.0f)
+                {
                     return Color{0, 0, 0};
+                }
 
                 direction = direction.normalized();
                 break;
+            case MaterialType::Dielectric:
+            {
+                const float incident_ior = hit.entering ? 1.0f : material.ior;
+                const float transmitted_ior = hit.entering ? material.ior : 1.0f;
+                std::uniform_real_distribution<float> sample{0.0f, 1.0f};
+                direction = Vec3::refract(incoming, normal, incident_ior, transmitted_ior, sample(generator_));
+                break;
+            }
             default:
                 return Color{0, 0, 0};
         }
 
-        const Ray scattered{hit.position, direction};
+        const Ray scattered{hit.position, direction.normalized()};
         optional<HitRecord> next = closest_hit(scattered, scene_);
 
         if (!next)

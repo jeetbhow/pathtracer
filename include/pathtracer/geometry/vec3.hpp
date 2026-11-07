@@ -9,7 +9,10 @@ namespace pathtracer
         float z;
 
         static float dot(const Vec3& a, const Vec3& b);
+        static Vec3 proj_unit(const Vec3& a, const Vec3& b);
         static Vec3 reflect(const Vec3& incoming, const Vec3& normal);
+        // Unit I and N, with N opposing I; reflection_sample is uniform in [0, 1).
+        static Vec3 refract(const Vec3& I, const Vec3& N, float n_a, float n_b, float reflection_sample);
 
         float length_squared() const;
         float length() const;

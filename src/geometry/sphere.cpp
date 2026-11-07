@@ -71,9 +71,21 @@ namespace pathtracer
             static_cast<float>(ray.origin().y + t * dy),
             static_cast<float>(ray.origin().z + t * dz)
         };
-        const Vec3 outward_normal = normal(position);
-        const Vec3 shading_normal = Vec3::dot(direction, outward_normal) > 0.0f
-                                    ? -1.0f * outward_normal : outward_normal;
-        return HitRecord{static_cast<float>(t), position, shading_normal, *this, ray};
+
+        Vec3 outward_normal = normal(position);
+        const float outward_normal_dot = Vec3::dot(direction, outward_normal);
+
+        bool entering = outward_normal_dot < 0.0f ? true : false;
+        outward_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;
+
+        return HitRecord
+        {
+            static_cast<float>(t),
+            position,
+            outward_normal,
+            *this,
+            ray,
+            entering
+        };
     }
 } // namespace pathtracer

@@ -8,6 +8,7 @@ namespace pathtracer
     {
         Diffuse,
         Metal,
+        Dielectric,
     };
 
     struct Material
@@ -15,5 +16,6 @@ namespace pathtracer
         MaterialType type = MaterialType::Diffuse;
         Vec3 albedo{0.5f, 0.5f, 0.5f};
         float roughness = 0.0f;
+        float ior = 1.5f;
     };
 } // namespace pathtracer
