@@ -2,9 +2,10 @@
 
 #include "pathtracer/camera/camera.hpp"
 #include "pathtracer/camera/image.hpp"
-#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/object/object.hpp"
 
 #include <vector>
+#include <memory>
 #include <cstdint>
 #include <random>
 
@@ -12,7 +13,7 @@ namespace pathtracer
 {
     struct Scene
     {
-        std::vector<Sphere> spheres;
+        std::vector<std::shared_ptr<const Object>> objects;
     };
 
     class Renderer

@@ -1,4 +1,4 @@
-#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/object/object.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <cmath>
@@ -29,7 +29,7 @@ namespace pathtracer
 
     Vec3 Sphere::normal(const Vec3 &p) const
     {
-        return (p - center_) / radius_;
+        return (p - center) / radius;
     }
 
     std::optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
@@ -39,13 +39,13 @@ namespace pathtracer
         const double dx = direction.x;
         const double dy = direction.y;
         const double dz = direction.z;
-        const double ox = static_cast<double>(ray.origin.x) - center_.x;
-        const double oy = static_cast<double>(ray.origin.y) - center_.y;
-        const double oz = static_cast<double>(ray.origin.z) - center_.z;
+        const double ox = static_cast<double>(ray.origin.x) - center.x;
+        const double oy = static_cast<double>(ray.origin.y) - center.y;
+        const double oz = static_cast<double>(ray.origin.z) - center.z;
         const double a = dx * dx + dy * dy + dz * dz;
         const double half_b = ox * dx + oy * dy + oz * dz;
         const double c = ox * ox + oy * oy + oz * oz
-                         - static_cast<double>(radius_) * radius_;
+                         - static_cast<double>(radius) * radius;
         const double discriminant = half_b * half_b - a * c;
 
         if (a == 0.0f || discriminant < 0.0f)
@@ -83,7 +83,7 @@ namespace pathtracer
             static_cast<float>(t),
             position,
             outward_normal,
-            *this,
+            material,
             ray,
             entering
         };

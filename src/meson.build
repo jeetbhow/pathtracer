@@ -1,7 +1,7 @@
 lib_sources = files(
   'geometry/vec3.cpp',
   'geometry/ray.cpp',
-  'geometry/sphere.cpp',
+  'object/object.cpp',
   'camera/image.cpp',
   'camera/camera.cpp',
   'camera/viewport.cpp',

@@ -1,6 +1,7 @@
 #include "pathtracer/renderer.hpp"
 
 #include <gtest/gtest.h>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -15,7 +16,7 @@ TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
     Sphere enclosure{Vec3{0, 0, 0}, 2};
     enclosure.material = Material{GetParam(), Vec3{1, 1, 1}, 0};
     Image image{3, 3};
-    const Renderer renderer{Scene{{enclosure}}, Camera{image, 32}, 42};
+    const Renderer renderer{Scene{{std::make_shared<Sphere>(enclosure)}}, Camera{image, 32}, 42};
     EXPECT_EQ(&renderer.render(), &image);
     std::ostringstream output;
     renderer.render().write_ppm(output);

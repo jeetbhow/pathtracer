@@ -1,4 +1,4 @@
-#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/object/object.hpp"
 
 #include <gtest/gtest.h>
 
@@ -7,7 +7,8 @@ using namespace pathtracer;
 TEST(Sphere, ComputesSurfaceNormal)
 {
     const Sphere sphere{Vec3{0, 0, -3}, 2.0f};
-    const Vec3 normal = sphere.normal(Vec3{0, 2, -3});
+    const Object& object = sphere;
+    const Vec3 normal = object.normal(Vec3{0, 2, -3});
     EXPECT_FLOAT_EQ(normal.x, 0.0f);
     EXPECT_FLOAT_EQ(normal.y, 1.0f);
     EXPECT_FLOAT_EQ(normal.z, 0.0f);
@@ -16,9 +17,10 @@ TEST(Sphere, ComputesSurfaceNormal)
 TEST(Sphere, ReturnsNearestHitForNonUnitRay)
 {
     const Sphere sphere{Vec3{0, 0, -5}, 1};
-    const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -2}});
+    const Object& object = sphere;
+    const auto hit = object.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -2}});
     ASSERT_TRUE(hit.has_value());
-    EXPECT_EQ(&hit->object, &sphere);
+    EXPECT_EQ(&hit->material, &sphere.material);
     EXPECT_FLOAT_EQ(hit->t, 2.0f);
     EXPECT_FLOAT_EQ(hit->position.x, 0.0f);
     EXPECT_FLOAT_EQ(hit->position.y, 0.0f);
@@ -33,7 +35,7 @@ TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
     const Sphere sphere{Vec3{0, 0, -5}, 1};
     const auto inside = sphere.hit(Ray{Vec3{0, 0, -5}, Vec3{1, 0, 0}});
     ASSERT_TRUE(inside.has_value());
-    EXPECT_EQ(&inside->object, &sphere);
+    EXPECT_EQ(&inside->material, &sphere.material);
     EXPECT_FLOAT_EQ(inside->t, 1.0f);
     EXPECT_FLOAT_EQ(inside->position.x, 1.0f);
     EXPECT_FLOAT_EQ(inside->position.y, 0.0f);
@@ -44,7 +46,7 @@ TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
 
     const auto surface = sphere.hit(Ray{Vec3{0, 0, -4}, Vec3{0, 0, -1}});
     ASSERT_TRUE(surface.has_value());
-    EXPECT_EQ(&surface->object, &sphere);
+    EXPECT_EQ(&surface->material, &sphere.material);
     EXPECT_FLOAT_EQ(surface->t, 2.0f);
     EXPECT_LE(Vec3::dot(surface->incoming.direction, surface->normal), 0.0f);
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, -4}, Vec3{0, 0, 1}}).has_value());
@@ -55,7 +57,7 @@ TEST(Sphere, ReturnsTangentHit)
     const Sphere sphere{Vec3{0, 0, -5}, 1};
     const auto hit = sphere.hit(Ray{Vec3{1, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());
-    EXPECT_EQ(&hit->object, &sphere);
+    EXPECT_EQ(&hit->material, &sphere.material);
     EXPECT_FLOAT_EQ(hit->t, 5.0f);
     EXPECT_FLOAT_EQ(hit->position.x, 1.0f);
     EXPECT_FLOAT_EQ(hit->position.y, 0.0f);

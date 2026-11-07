@@ -23,12 +23,13 @@ Library sources live in `src/`, with public headers in `include/pathtracer/`.
 Include them as `"pathtracer/camera/camera.hpp"`, for example; library types and functions
 use the `pathtracer` namespace. Add new source files to `src/meson.build`.
 
-- `geometry/` groups `vec3`, `ray`, and `sphere` in both the public headers and
-  library sources. They provide vector math, rays, sphere intersections, and
-  surface normals.
+- `geometry/` groups `vec3` and `ray` in both the public headers and library
+  sources. They provide vector math and rays.
 - `camera/` groups `camera`, which generates rays from camera settings and image
   dimensions, and `image`, which stores pixels and writes PPM output.
-- `renderer` defines `Scene`, a collection of spheres, and handles nearest-hit
+- `object/` groups `object`, which defines objects, sphere intersections, and hit
+  records, and `material`, which defines material properties.
+- `renderer` defines `Scene`, a collection of objects, and handles nearest-hit
   selection, the pixel loop, sphere shading, and the sky background.
 
 Google Test in `test/` links against the same pathtracer library as the executable.

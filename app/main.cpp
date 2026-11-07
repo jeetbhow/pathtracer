@@ -1,7 +1,9 @@
 #include "pathtracer/renderer.hpp"
+#include "pathtracer/object/material.hpp"
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 using namespace pathtracer;
 
@@ -19,10 +21,10 @@ int main()
     const Scene scene
     {
         {
-            metal_sphere,
-            glass_sphere,
-            Sphere{Vec3{1.7f, -0.2f, -3.5f}, 0.8f},
-            Sphere{Vec3{0, -101, -3}, 100.0f}
+            std::make_shared<Sphere>(metal_sphere),
+            std::make_shared<Sphere>(glass_sphere),
+            std::make_shared<Sphere>(Vec3{1.7f, -0.2f, -3.5f}, 0.8f),
+            std::make_shared<Sphere>(Vec3{0, -101, -3}, 100.0f)
         }
     };
 

@@ -1,6 +1,5 @@
 #include "pathtracer/renderer.hpp"
-#include "pathtracer/geometry/hit_record.hpp"
-#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/object/object.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <optional>
@@ -13,9 +12,9 @@ namespace pathtracer
     static std::optional<HitRecord> closest_hit(const Ray& ray, const Scene& scene)
     {
         std::optional<HitRecord> closest;
-        for (const Sphere& sphere : scene.spheres)
+        for (const auto& object : scene.objects)
         {
-            const std::optional<HitRecord> hit = sphere.hit(ray);
+            const std::optional<HitRecord> hit = object->hit(ray);
             if (hit && (!closest || hit->t < closest->t))
             {
                 closest.emplace(*hit);
@@ -38,7 +37,7 @@ namespace pathtracer
             return Color{0, 0, 0};
         }
 
-        const Material& material = hit.object.material;
+        const Material& material = hit.material;
         const Vec3 incoming = hit.incoming.direction.normalized();
         const Vec3& normal = hit.normal;
         Vec3 direction;
