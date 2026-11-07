@@ -13,10 +13,10 @@ int main()
     Camera camera{image};
 
     Sphere glass_sphere{Vec3{-1.6f, -0.4f, -2.5f}, 0.6f};
-    glass_sphere.material = Material{MaterialType::Dielectric, Color{1.0f, 1.0f, 1.0f}, 0.0f, 1.5f};
+    glass_sphere.material = std::make_shared<Dielectric>(Color{1.0f, 1.0f, 1.0f}, 1.5f);
 
     Sphere metal_sphere{Vec3{0, 0, -3}, 1.0f};
-    metal_sphere.material = Material{MaterialType::Metal, Color{0.9f, 0.9f, 0.9f}, 0.03f};
+    metal_sphere.material = std::make_shared<Metal>(Color{0.9f, 0.9f, 0.9f}, 0.03f);
 
     const Scene scene
     {

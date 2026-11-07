@@ -1,4 +1,5 @@
 #include "pathtracer/renderer.hpp"
+#include "pathtracer/object/material.hpp"
 #include "pathtracer/object/object.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
@@ -37,53 +38,22 @@ namespace pathtracer
             return Color{0, 0, 0};
         }
 
-        const Material& material = hit.material;
-        const Vec3 incoming = hit.incoming.direction.normalized();
-        const Vec3& normal = hit.normal;
-        Vec3 direction;
-
-        switch (material.type)
+        const auto scatter = hit.material.scatter(hit.incoming, hit.normal, hit.entering, generator_);
+        if (!scatter)
         {
-            case MaterialType::Diffuse:
-                direction = (normal + Sphere::random_vector(generator_));
-                break;
-            case MaterialType::Metal:
-                direction = Vec3::reflect(incoming, normal);
-
-                if (material.roughness > 0.0f)
-                {
-                    direction = direction + material.roughness * Sphere::random_vector(generator_);
-                }
-
-                if (Vec3::dot(direction, normal) <= 0.0f)
-                {
-                    return Color{0, 0, 0};
-                }
-
-                direction = direction.normalized();
-                break;
-            case MaterialType::Dielectric:
-            {
-                const float incident_ior = hit.entering ? 1.0f : material.ior;
-                const float transmitted_ior = hit.entering ? material.ior : 1.0f;
-                std::uniform_real_distribution<float> sample{0.0f, 1.0f};
-                direction = Vec3::refract(incoming, normal, incident_ior, transmitted_ior, sample(generator_));
-                break;
-            }
-            default:
-                return Color{0, 0, 0};
+            return Color{0, 0, 0};
         }
 
-        const Ray scattered{hit.position, direction.normalized()};
+        const Ray scattered{hit.position, scatter->direction};
         optional<HitRecord> next = closest_hit(scattered, scene_);
 
         if (!next)
         {
-            return tint(skybox_color(scattered), material.albedo);
+            return tint(skybox_color(scattered), scatter->attenuation);
         }
 
         --bounces_remaining_;
-        return tint(handle_hit(*next), material.albedo);
+        return tint(handle_hit(*next), scatter->attenuation);
     }
 
     Image& Renderer::render() const

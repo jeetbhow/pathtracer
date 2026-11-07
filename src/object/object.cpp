@@ -2,31 +2,9 @@
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <cmath>
-#include <random>
-
-using std::mt19937;
-using std::uniform_real_distribution;
-using std::sqrt;
 
 namespace pathtracer
 {
-    Vec3 Sphere::random_vector(std::mt19937& rng)
-    {
-        uniform_real_distribution<float> z_dist{-1, 1};
-        uniform_real_distribution<float> phi_dist{0.0f, 2.0f * PI};
-
-        float z = z_dist(rng);
-        float phi = phi_dist(rng);
-        float r = sqrt(1 - z * z);
-
-        return Vec3
-        {
-            r * static_cast<float>(cos(phi)),
-            r * static_cast<float>(sin(phi)),
-            z
-        };
-    }
-
     Vec3 Sphere::normal(const Vec3 &p) const
     {
         return (p - center) / radius;
@@ -83,7 +61,7 @@ namespace pathtracer
             static_cast<float>(t),
             position,
             outward_normal,
-            material,
+            *material,
             ray,
             entering
         };

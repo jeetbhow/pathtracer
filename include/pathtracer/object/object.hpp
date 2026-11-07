@@ -6,13 +6,9 @@
 
 #include <memory>
 #include <optional>
-#include <numbers>
-#include <random>
 
 namespace pathtracer
 {
-    static constexpr float PI = std::numbers::pi_v<float>;
-
     struct HitRecord
     {
         float t;
@@ -28,7 +24,7 @@ namespace pathtracer
     public:
         virtual ~Object() = default;
 
-        Material material{};
+        std::shared_ptr<const Material> material = std::make_shared<Diffuse>();
 
         virtual std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const = 0;
         virtual Vec3 normal(const Vec3& p) const = 0;
@@ -45,7 +41,5 @@ namespace pathtracer
 
         std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const override;
         Vec3 normal(const Vec3& p) const override;
-
-        static Vec3 random_vector(std::mt19937& rng);
     };
 } // namespace pathtracer

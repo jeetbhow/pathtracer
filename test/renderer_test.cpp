@@ -1,4 +1,5 @@
 #include "pathtracer/renderer.hpp"
+#include "pathtracer/object/material.hpp"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -7,14 +8,23 @@
 
 using namespace pathtracer;
 
-class EnclosedRenderer : public testing::TestWithParam<MaterialType>
+class AbsorbingMaterial : public Material
+{
+public:
+    std::optional<ScatterResult> scatter(const Ray&, const Vec3&, bool, std::mt19937&) const override
+    {
+        return std::nullopt;
+    }
+};
+
+class EnclosedRenderer : public testing::TestWithParam<std::shared_ptr<const Material>>
 {
 };
 
 TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
     Sphere enclosure{Vec3{0, 0, 0}, 2};
-    enclosure.material = Material{GetParam(), Vec3{1, 1, 1}, 0};
+    enclosure.material = GetParam();
     Image image{3, 3};
     const Renderer renderer{Scene{{std::make_shared<Sphere>(enclosure)}}, Camera{image, 32}, 42};
     EXPECT_EQ(&renderer.render(), &image);
@@ -40,4 +50,6 @@ TEST_P(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 }
 
 INSTANTIATE_TEST_SUITE_P(Materials, EnclosedRenderer,
-                        testing::Values(MaterialType::Diffuse, MaterialType::Metal));
+                        testing::Values(std::make_shared<Diffuse>(Color{1, 1, 1}),
+                                        std::make_shared<Metal>(Color{1, 1, 1}, 0),
+                                        std::make_shared<AbsorbingMaterial>()));

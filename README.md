@@ -28,7 +28,8 @@ use the `pathtracer` namespace. Add new source files to `src/meson.build`.
 - `camera/` groups `camera`, which generates rays from camera settings and image
   dimensions, and `image`, which stores pixels and writes PPM output.
 - `object/` groups `object`, which defines objects, sphere intersections, and hit
-  records, and `material`, which defines material properties.
+  records, and `material`, which defines the scattering interface and diffuse,
+  metal, and dielectric implementations.
 - `renderer` defines `Scene`, a collection of objects, and handles nearest-hit
   selection, the pixel loop, sphere shading, and the sky background.
 

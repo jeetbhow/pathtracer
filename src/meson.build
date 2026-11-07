@@ -5,6 +5,7 @@ lib_sources = files(
   'camera/image.cpp',
   'camera/camera.cpp',
   'camera/viewport.cpp',
+  'object/material.cpp',
   'renderer.cpp',
 )
 
