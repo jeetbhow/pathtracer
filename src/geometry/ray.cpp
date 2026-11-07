@@ -6,14 +6,14 @@ namespace pathtracer
 {
     Vec3 Ray::at(float t) const
     {
-        return origin_ + t * direction_;
+        return origin + t * direction;
     }
 
     std::string Ray::to_string() const
     {
         std::ostringstream out;
-        out << "Ray{origin: (" << origin_.x << ", " << origin_.y << ", " << origin_.z
-            << "), direction: (" << direction_.x << ", " << direction_.y << ", " << direction_.z << ")}";
+        out << "Ray{origin: (" << origin.x << ", " << origin.y << ", " << origin.z
+            << "), direction: (" << direction.x << ", " << direction.y << ", " << direction.z << ")}";
         return out.str();
     }
 

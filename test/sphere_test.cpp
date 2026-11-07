@@ -46,7 +46,7 @@ TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
     ASSERT_TRUE(surface.has_value());
     EXPECT_EQ(&surface->object, &sphere);
     EXPECT_FLOAT_EQ(surface->t, 2.0f);
-    EXPECT_LE(Vec3::dot(surface->incoming.direction(), surface->normal), 0.0f);
+    EXPECT_LE(Vec3::dot(surface->incoming.direction, surface->normal), 0.0f);
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, -4}, Vec3{0, 0, 1}}).has_value());
 }
 
@@ -103,7 +103,7 @@ TEST(Sphere, InteriorReflectionStaysInTheShadingHemisphere)
     const Sphere sphere{Vec3{0, 0, 0}, 2};
     const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());
-    const Vec3 reflected = Vec3::reflect(hit->incoming.direction(), hit->normal);
+    const Vec3 reflected = Vec3::reflect(hit->incoming.direction, hit->normal);
     EXPECT_GT(Vec3::dot(reflected, hit->normal), 0.0f);
     EXPECT_FLOAT_EQ(reflected.z, 1.0f);
 }

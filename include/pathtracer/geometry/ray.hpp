@@ -6,28 +6,13 @@
 
 namespace pathtracer
 {
-    class Ray
+    struct Ray
     {
-    public:
-        Ray(const Vec3& origin, const Vec3& direction) : origin_(origin), direction_(direction)
-        {
-        }
-
-        const Vec3 &direction() const
-        {
-            return direction_;
-        }
-        const Vec3 &origin() const
-        {
-            return origin_;
-        }
+        Vec3 origin;
+        Vec3 direction;
 
         Vec3 at(float t) const;
 
         std::string to_string() const;
-
-    private:
-        Vec3 origin_;
-        Vec3 direction_;
     };
 } // namespace pathtracer

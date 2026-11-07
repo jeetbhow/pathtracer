@@ -34,14 +34,14 @@ namespace pathtracer
 
     std::optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
     {
-        const Vec3& direction = ray.direction();
+        const Vec3& direction = ray.direction;
         // Promote before arithmetic so small radii survive at large distances.
         const double dx = direction.x;
         const double dy = direction.y;
         const double dz = direction.z;
-        const double ox = static_cast<double>(ray.origin().x) - center_.x;
-        const double oy = static_cast<double>(ray.origin().y) - center_.y;
-        const double oz = static_cast<double>(ray.origin().z) - center_.z;
+        const double ox = static_cast<double>(ray.origin.x) - center_.x;
+        const double oy = static_cast<double>(ray.origin.y) - center_.y;
+        const double oz = static_cast<double>(ray.origin.z) - center_.z;
         const double a = dx * dx + dy * dy + dz * dz;
         const double half_b = ox * dx + oy * dy + oz * dz;
         const double c = ox * ox + oy * oy + oz * oz
@@ -67,9 +67,9 @@ namespace pathtracer
 
         const Vec3 position
         {
-            static_cast<float>(ray.origin().x + t * dx),
-            static_cast<float>(ray.origin().y + t * dy),
-            static_cast<float>(ray.origin().z + t * dz)
+            static_cast<float>(ray.origin.x + t * dx),
+            static_cast<float>(ray.origin.y + t * dy),
+            static_cast<float>(ray.origin.z + t * dz)
         };
 
         Vec3 outward_normal = normal(position);
