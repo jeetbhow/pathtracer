@@ -7,8 +7,8 @@ using namespace pathtracer;
 
 int main()
 {
-    Image image{1280, 720};
-    Camera camera{image, 64};
+    Image image{640, 360};
+    Camera camera{image};
 
     Sphere glass_sphere{Vec3{-1.6f, -0.4f, -2.5f}, 0.6f};
     glass_sphere.material = Material{MaterialType::Dielectric, Color{1.0f, 1.0f, 1.0f}, 0.0f, 1.5f};
