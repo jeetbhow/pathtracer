@@ -4,16 +4,21 @@
 #include <numbers>
 #include <random>
 
+using std::cos;
 using std::mt19937;
-using std::uniform_real_distribution;
+using std::nullopt;
+using std::numbers::pi_v;
+using std::optional;
+using std::sin;
 using std::sqrt;
+using std::uniform_real_distribution;
 
 namespace pathtracer
 {
-    static Vec3 random_unit_vector(std::mt19937& rng)
+    static Vec3 random_unit_vector(mt19937& rng)
     {
         uniform_real_distribution<float> z_dist{-1, 1};
-        uniform_real_distribution<float> phi_dist{0.0f, 2.0f * std::numbers::pi_v<float>};
+        uniform_real_distribution<float> phi_dist{0.0f, 2.0f * pi_v<float>};
 
         float z = z_dist(rng);
         float phi = phi_dist(rng);
@@ -27,8 +32,8 @@ namespace pathtracer
         };
     }
 
-    std::optional<ScatterResult> Diffuse::scatter(const Ray&, const Vec3& normal,
-                                                 bool, std::mt19937& generator) const
+    optional<ScatterResult> Diffuse::scatter(const Ray&, const Vec3& normal,
+                                                 bool, mt19937& generator) const
     {
         Vec3 direction = normal + random_unit_vector(generator);
         if (direction.length_squared() == 0.0f)
@@ -38,8 +43,8 @@ namespace pathtracer
         return ScatterResult{direction.normalized(), albedo};
     }
 
-    std::optional<ScatterResult> Metal::scatter(const Ray& incoming, const Vec3& normal,
-                                               bool, std::mt19937& generator) const
+    optional<ScatterResult> Metal::scatter(const Ray& incoming, const Vec3& normal,
+                                               bool, mt19937& generator) const
     {
         Vec3 direction = Vec3::reflect(incoming.direction.normalized(), normal);
         if (roughness > 0.0f)
@@ -48,13 +53,13 @@ namespace pathtracer
         }
         if (Vec3::dot(direction, normal) <= 0.0f)
         {
-            return std::nullopt;
+            return nullopt;
         }
         return ScatterResult{direction.normalized(), albedo};
     }
 
-    std::optional<ScatterResult> Dielectric::scatter(const Ray& incoming, const Vec3& normal,
-                                                    bool entering, std::mt19937& generator) const
+    optional<ScatterResult> Dielectric::scatter(const Ray& incoming, const Vec3& normal,
+                                                    bool entering, mt19937& generator) const
     {
         const float incident_ior = entering ? 1.0f : ior;
         const float transmitted_ior = entering ? ior : 1.0f;

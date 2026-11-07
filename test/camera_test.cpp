@@ -3,14 +3,18 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 
+using std::invalid_argument;
+using std::mt19937;
+using std::uniform_real_distribution;
+
 using namespace pathtracer;
 
 TEST(Camera, RejectsZeroDimensions)
 {
     Image empty_width{0, 3};
     Image empty_height{7, 0};
-    EXPECT_THROW((Camera{empty_width}), std::invalid_argument);
-    EXPECT_THROW((Camera{empty_height}), std::invalid_argument);
+    EXPECT_THROW((Camera{empty_width}), invalid_argument);
+    EXPECT_THROW((Camera{empty_height}), invalid_argument);
 }
 
 TEST(Camera, StoresConfiguredSampleCount)
@@ -24,8 +28,8 @@ TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
 {
     Image image{7, 3};
     const Camera camera{image, 16};
-    std::mt19937 generator{42};
-    std::mt19937 replay{42};
+    mt19937 generator{42};
+    mt19937 replay{42};
 
     for (unsigned int i = 0; i < camera.samples; ++i)
     {
@@ -40,15 +44,15 @@ TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
         EXPECT_FLOAT_EQ(direction.y, repeated.y);
     }
     EXPECT_EQ(generator, replay);
-    EXPECT_NE(generator, (std::mt19937{42}));
+    EXPECT_NE(generator, (mt19937{42}));
 }
 
 TEST(Camera, TranslationPreservesRayDirections)
 {
     Image image{7, 3};
     Camera camera{image};
-    std::mt19937 generator{42};
-    std::mt19937 replay{42};
+    mt19937 generator{42};
+    mt19937 replay{42};
     const Ray original = camera.generate_ray(0, 0, generator);
 
     camera.origin = Vec3{3, -2, 5};
@@ -67,7 +71,7 @@ TEST(Camera, GenerateRaySamplesCentralPixel)
 {
     Image image{7, 3};
     const Camera camera{image};
-    std::mt19937 generator{42};
+    mt19937 generator{42};
     const Ray ray = camera.generate_ray(1, 3, generator);
     const Vec3 direction = ray.direction;
 
@@ -85,9 +89,9 @@ TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio)
 {
     Image image{7, 3};
     const Camera camera{image};
-    std::mt19937 generator{42};
-    std::mt19937 replay{42};
-    std::uniform_real_distribution<float> distribution{0.0f, 1.0f};
+    mt19937 generator{42};
+    mt19937 replay{42};
+    uniform_real_distribution<float> distribution{0.0f, 1.0f};
     const float col_offset = distribution(replay);
     const float row_offset = distribution(replay);
     const Vec3 direction = camera.generate_ray(0, 0, generator).direction;
@@ -101,8 +105,8 @@ TEST(Camera, GenerateRayColumnsSpanLeftToRight)
 {
     Image image{7, 3};
     const Camera camera{image};
-    std::mt19937 left_generator{42};
-    std::mt19937 right_generator{42};
+    mt19937 left_generator{42};
+    mt19937 right_generator{42};
     const Vec3 left = camera.generate_ray(1, 0, left_generator).direction;
     const Vec3 right = camera.generate_ray(1, 6, right_generator).direction;
 
@@ -118,8 +122,8 @@ TEST(Camera, GenerateRayRowsSpanTopToBottom)
 {
     Image image{7, 3};
     const Camera camera{image};
-    std::mt19937 top_generator{42};
-    std::mt19937 bottom_generator{42};
+    mt19937 top_generator{42};
+    mt19937 bottom_generator{42};
     const Vec3 top = camera.generate_ray(0, 3, top_generator).direction;
     const Vec3 bottom = camera.generate_ray(2, 3, bottom_generator).direction;
 

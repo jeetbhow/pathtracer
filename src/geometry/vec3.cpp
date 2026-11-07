@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <cmath>
 
+using std::clamp;
+using std::pow;
+using std::sqrt;
+
 namespace pathtracer
 {
     float Vec3::dot(const Vec3& a, const Vec3& b)
@@ -39,9 +43,9 @@ namespace pathtracer
             return reflect(I, N);
         }
 
-        const float cos_incident = std::clamp(-Vec3::dot(I, N), 0.0f, 1.0f);
+        const float cos_incident = clamp(-Vec3::dot(I, N), 0.0f, 1.0f);
         const float r = (n_a - n_b) / (n_a + n_b);
-        const float reflectance = r * r + (1.0f - r * r) * std::pow(1.0f - cos_incident, 5.0f);
+        const float reflectance = r * r + (1.0f - r * r) * pow(1.0f - cos_incident, 5.0f);
         if (reflection_sample < reflectance)
         {
             return reflect(I, N);

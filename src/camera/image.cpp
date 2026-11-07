@@ -6,8 +6,14 @@
 #include <ostream>
 #include <stdexcept>
 
-
 using std::clamp;
+using std::isfinite;
+using std::length_error;
+using std::logic_error;
+using std::numeric_limits;
+using std::ostream;
+using std::out_of_range;
+using std::size_t;
 using std::sqrt;
 
 namespace pathtracer
@@ -15,7 +21,7 @@ namespace pathtracer
 
     static int channel_value(float value)
     {
-        if (!std::isfinite(value))
+        if (!isfinite(value))
         {
             return 0;
         }
@@ -26,29 +32,29 @@ namespace pathtracer
         return rgb;
     }
 
-    Image::Image(std::size_t width, std::size_t height) : width(width), height(height)
+    Image::Image(size_t width, size_t height) : width(width), height(height)
     {
-        if (height != 0 && width > std::numeric_limits<std::size_t>::max() / height)
+        if (height != 0 && width > numeric_limits<size_t>::max() / height)
         {
-            throw std::length_error("Image dimensions are too large");
+            throw length_error("Image dimensions are too large");
         }
         pixels_.resize(width * height, Color{0.0f, 0.0f, 0.0f});
     }
 
-    void Image::set_pixel(std::size_t row, std::size_t col, const Color& color)
+    void Image::set_pixel(size_t row, size_t col, const Color& color)
     {
         if (row >= height || col >= width)
         {
-            throw std::out_of_range("Pixel coordinates are outside the image");
+            throw out_of_range("Pixel coordinates are outside the image");
         }
         pixels_[row * width + col] = color;
     }
 
-    void Image::write_ppm(std::ostream& output) const
+    void Image::write_ppm(ostream& output) const
     {
         if (width == 0 || height == 0)
         {
-            throw std::logic_error("Cannot write an empty image");
+            throw logic_error("Cannot write an empty image");
         }
 
         output << "P3\n" << width << ' ' << height << "\n255\n";

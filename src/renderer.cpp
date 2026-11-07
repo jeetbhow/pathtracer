@@ -4,18 +4,18 @@
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <optional>
-#include <random>
 
 using std::optional;
+using std::size_t;
 
 namespace pathtracer
 {
-    static std::optional<HitRecord> closest_hit(const Ray& ray, const Scene& scene)
+    static optional<HitRecord> closest_hit(const Ray& ray, const Scene& scene)
     {
-        std::optional<HitRecord> closest;
+        optional<HitRecord> closest;
         for (const auto& object : scene.objects)
         {
-            const std::optional<HitRecord> hit = object->hit(ray);
+            const optional<HitRecord> hit = object->hit(ray);
             if (hit && (!closest || hit->t < closest->t))
             {
                 closest.emplace(*hit);
@@ -59,16 +59,16 @@ namespace pathtracer
     Image& Renderer::render() const
     {
         Image& image = camera_.image;
-        for (std::size_t row = 0; row < image.height; ++row)
+        for (size_t row = 0; row < image.height; ++row)
         {
-            for (std::size_t col = 0; col < image.width; ++col)
+            for (size_t col = 0; col < image.width; ++col)
             {
                 Color color{0, 0, 0};
 
                 for (unsigned int sample = 0; sample < camera_.samples; ++sample)
                 {
                     const Ray ray = camera_.generate_ray(row, col, generator_);
-                    const std::optional<HitRecord> hit = closest_hit(ray, scene_);
+                    const optional<HitRecord> hit = closest_hit(ray, scene_);
 
                     if (hit)
                     {

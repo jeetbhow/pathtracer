@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+using std::nullopt;
+using std::optional;
+using std::sqrt;
+
 namespace pathtracer
 {
     Vec3 Sphere::normal(const Vec3 &p) const
@@ -10,7 +14,7 @@ namespace pathtracer
         return (p - center) / radius;
     }
 
-    std::optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
+    optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
     {
         const Vec3& direction = ray.direction;
         // Promote before arithmetic so small radii survive at large distances.
@@ -28,10 +32,10 @@ namespace pathtracer
 
         if (a == 0.0f || discriminant < 0.0f)
         {
-            return std::nullopt;
+            return nullopt;
         }
 
-        const double root = std::sqrt(discriminant);
+        const double root = sqrt(discriminant);
         double t = (-half_b - root) / a;
 
         if (t <= t_min)
@@ -39,7 +43,7 @@ namespace pathtracer
             t = (-half_b + root) / a;
             if (t <= t_min)
             {
-                return std::nullopt;
+                return nullopt;
             }
         }
 

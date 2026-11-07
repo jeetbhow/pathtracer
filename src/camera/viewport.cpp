@@ -2,13 +2,16 @@
 
 #include <stdexcept>
 
+using std::invalid_argument;
+using std::size_t;
+
 namespace pathtracer
 {
-    Viewport::Viewport(std::size_t image_width, std::size_t image_height)
+    Viewport::Viewport(size_t image_width, size_t image_height)
     {
         if (image_width == 0 || image_height == 0)
         {
-            throw std::invalid_argument("Viewport image dimensions must be nonzero");
+            throw invalid_argument("Viewport image dimensions must be nonzero");
         }
 
         const float height = 2.0f;
