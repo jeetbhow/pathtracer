@@ -6,8 +6,8 @@ using std::uniform_real_distribution;
 
 namespace pathtracer
 {
-    Camera::Camera(Image& image, unsigned int samples)
-        : image(image), samples(samples), viewport_(image.width, image.height)
+    Camera::Camera(Image& image, float fov, unsigned int samples)
+        : image(image), samples(samples), fov(fov), viewport_(image, fov)
     {
     }
 

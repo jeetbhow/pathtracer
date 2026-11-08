@@ -17,8 +17,9 @@ namespace pathtracer
         Image& image;
         const unsigned int samples;
         Vec3 origin = Vec3{0, 0, 0};
+        float fov = 90;
 
-        Camera(Image& image, unsigned int samples = 8);
+        Camera(Image& image, float fov, unsigned int samples = 8);
 
         Ray generate_ray(std::size_t row, std::size_t col, std::mt19937& generator) const;
 

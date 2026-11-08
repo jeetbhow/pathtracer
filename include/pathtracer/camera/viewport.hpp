@@ -1,8 +1,7 @@
 #pragma once
 
+#include "pathtracer/camera/image.hpp"
 #include "pathtracer/geometry/vec3.hpp"
-
-#include <cstddef>
 
 namespace pathtracer
 {
@@ -13,6 +12,6 @@ namespace pathtracer
         Vec3 pixel_du;
         Vec3 pixel_dv;
         
-        Viewport(std::size_t image_width, std::size_t image_height);
+        Viewport(const Image& image, float fov);
     };
 } // namespace pathtracer

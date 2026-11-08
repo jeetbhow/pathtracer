@@ -13,21 +13,21 @@ TEST(Camera, RejectsZeroDimensions)
 {
     Image empty_width{0, 3};
     Image empty_height{7, 0};
-    EXPECT_THROW((Camera{empty_width}), invalid_argument);
-    EXPECT_THROW((Camera{empty_height}), invalid_argument);
+    EXPECT_THROW((Camera{empty_width, 90.0f}), invalid_argument);
+    EXPECT_THROW((Camera{empty_height, 90.0f}), invalid_argument);
 }
 
 TEST(Camera, StoresConfiguredSampleCount)
 {
     Image image{7, 3};
-    const Camera camera{image, 5};
+    const Camera camera{image, 90.0f, 5};
     EXPECT_EQ(camera.samples, 5u);
 }
 
 TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
 {
     Image image{7, 3};
-    const Camera camera{image, 16};
+    const Camera camera{image, 90.0f, 16};
     mt19937 generator{42};
     mt19937 replay{42};
 
@@ -50,7 +50,7 @@ TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
 TEST(Camera, TranslationPreservesRayDirections)
 {
     Image image{7, 3};
-    Camera camera{image};
+    Camera camera{image, 90.0f};
     mt19937 generator{42};
     mt19937 replay{42};
     const Ray original = camera.generate_ray(0, 0, generator);
@@ -70,7 +70,7 @@ TEST(Camera, TranslationPreservesRayDirections)
 TEST(Camera, GenerateRaySamplesCentralPixel)
 {
     Image image{7, 3};
-    const Camera camera{image};
+    const Camera camera{image, 90.0f};
     mt19937 generator{42};
     const Ray ray = camera.generate_ray(1, 3, generator);
     const Vec3 direction = ray.direction;
@@ -88,7 +88,7 @@ TEST(Camera, GenerateRaySamplesCentralPixel)
 TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio)
 {
     Image image{7, 3};
-    const Camera camera{image};
+    const Camera camera{image, 90.0f};
     mt19937 generator{42};
     mt19937 replay{42};
     uniform_real_distribution<float> distribution{0.0f, 1.0f};
@@ -104,7 +104,7 @@ TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio)
 TEST(Camera, GenerateRayColumnsSpanLeftToRight)
 {
     Image image{7, 3};
-    const Camera camera{image};
+    const Camera camera{image, 90.0f};
     mt19937 left_generator{42};
     mt19937 right_generator{42};
     const Vec3 left = camera.generate_ray(1, 0, left_generator).direction;
@@ -121,7 +121,7 @@ TEST(Camera, GenerateRayColumnsSpanLeftToRight)
 TEST(Camera, GenerateRayRowsSpanTopToBottom)
 {
     Image image{7, 3};
-    const Camera camera{image};
+    const Camera camera{image, 90.0f};
     mt19937 top_generator{42};
     mt19937 bottom_generator{42};
     const Vec3 top = camera.generate_ray(0, 3, top_generator).direction;

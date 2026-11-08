@@ -15,7 +15,7 @@ using namespace pathtracer;
 int main()
 {
     Image image{640, 360};
-    Camera camera{image};
+    Camera camera{image, 90};
 
     auto glass_sphere = make_unique<Sphere>(Vec3{-1.6f, -0.4f, -2.5f}, 0.6f);
     glass_sphere->material = make_unique<Dielectric>(Color{1.0f, 1.0f, 1.0f}, 1.5f);
