@@ -3,6 +3,7 @@ project(
   'cpp',
   version: '0.0.1',
   default_options: [
+    'buildtype=release',
     'cpp_std=c++23',
     'warning_level=2',
   ],
