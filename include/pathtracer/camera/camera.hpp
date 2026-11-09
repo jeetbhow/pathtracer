@@ -1,22 +1,54 @@
 #pragma once
 
 #include "pathtracer/geometry/ray.hpp"
+#include "pathtracer/geometry/vec3.hpp"
 #include "pathtracer/camera/image.hpp"
-#include "pathtracer/camera/viewport.hpp"
 
 #include <cstddef>
 #include <random>
 
 namespace pathtracer
 {
+    static constexpr float DEFAULT_FOCAL_LENGTH = 1.0f;
+    static constexpr Vec3 DEFAULT_POSITION{0, 0, 0};
+    static constexpr Vec3 DEFAULT_UP{0, 1, 0};
+    static constexpr Vec3 DEFAULT_LOOK_AT{0, 0, -1};
+    static constexpr float DEFAULT_FOV = 90;
+    static constexpr unsigned int DEFAULT_SAMPLES = 8;
+    static constexpr float DEFAULT_FOCUS_DISTANCE = 5.0f;
+
+    struct Viewport
+    {
+        // Coordinates are relative to the camera origin.
+        Vec3 pixel00{};
+        Vec3 pixel_du{};
+        Vec3 pixel_dv{};
+
+        Viewport() = default;
+        // direction must be a unit vector.
+        Viewport(const Image& image, Vec3 up, Vec3 forward, float fov, float focal_len);
+    };
+
+    struct FocusPlane
+    {
+        float focus_distance = DEFAULT_FOCUS_DISTANCE;
+        Vec3 normal{};
+
+        FocusPlane() = default;
+        FocusPlane(Vec3 normal) : normal(normal) {}
+
+        Vec3 hit(Ray r);
+    };
+
     class Camera
     {
     public:
-        Vec3 position = Vec3{0, 0, 0};
-        Vec3 up = Vec3{0, 1, 0};
-        Vec3 look_at = Vec3{0, 0, -1};
-        float fov = 90;
-        unsigned int samples = 8;
+        Vec3 position = DEFAULT_POSITION;
+        Vec3 up = DEFAULT_UP;
+        Vec3 look_at = DEFAULT_LOOK_AT;
+        float focal_length = DEFAULT_FOCAL_LENGTH;
+        float fov = DEFAULT_FOV;
+        unsigned int samples = DEFAULT_SAMPLES;
 
         Camera(Image& image);
 
@@ -27,9 +59,9 @@ namespace pathtracer
         Ray generate_ray(std::size_t row, std::size_t col, std::mt19937& generator) const;
 
     private:
-        static constexpr float FOCAL_LENGTH = 1.0f;
         Image& image_;                                  // Non-owning: image must outlive this Camera and any Renderer holding a copy.
         Viewport viewport_;
+        FocusPlane focus_plane_;
     };
 
 } // namespace pathtracer
