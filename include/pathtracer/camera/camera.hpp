@@ -51,9 +51,9 @@ namespace pathtracer
         Ray generate_ray(std::size_t row, std::size_t col, std::mt19937& generator) const;
 
     private:
-        Image& image_;                                  // Non-owning: image must outlive this Camera and any Renderer holding a copy.
+        Image& image_; // Non-owning: image must outlive this Camera and any Renderer using it.
         Viewport viewport_;
-        std::shared_ptr<const Plane> focus_plane_;
+        std::unique_ptr<const Plane> focus_plane_;
     };
 
 } // namespace pathtracer
