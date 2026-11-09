@@ -55,7 +55,7 @@ namespace pathtracer
         };
 
         Vec3 outward_normal = normal(position);
-        const float outward_normal_dot = Vec3::dot(direction, outward_normal);
+        const float outward_normal_dot = dot(direction, outward_normal);
 
         bool entering = outward_normal_dot < 0.0f ? true : false;
         outward_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;

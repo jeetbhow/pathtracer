@@ -36,26 +36,26 @@ namespace pathtracer
                                                  bool, mt19937& generator) const
     {
         Vec3 direction = normal + random_unit_vector(generator);
-        if (direction.length_squared() == 0.0f)
+        if (length_squared(direction) == 0.0f)
         {
             direction = normal;
         }
-        return ScatterResult{direction.normalized(), albedo};
+        return ScatterResult{normalize(direction), albedo};
     }
 
     optional<ScatterResult> Metal::scatter(const Ray& incoming, const Vec3& normal,
                                                bool, mt19937& generator) const
     {
-        Vec3 direction = Vec3::reflect(incoming.direction.normalized(), normal);
+        Vec3 direction = reflect(normalize(incoming.direction), normal);
         if (roughness > 0.0f)
         {
             direction += roughness * random_unit_vector(generator);
         }
-        if (Vec3::dot(direction, normal) <= 0.0f)
+        if (dot(direction, normal) <= 0.0f)
         {
             return nullopt;
         }
-        return ScatterResult{direction.normalized(), albedo};
+        return ScatterResult{normalize(direction), albedo};
     }
 
     optional<ScatterResult> Dielectric::scatter(const Ray& incoming, const Vec3& normal,
@@ -64,8 +64,8 @@ namespace pathtracer
         const float incident_ior = entering ? 1.0f : ior;
         const float transmitted_ior = entering ? ior : 1.0f;
         uniform_real_distribution<float> sample{0.0f, 1.0f};
-        const Vec3 direction = Vec3::refract(incoming.direction.normalized(), normal,
+        const Vec3 direction = refract(normalize(incoming.direction), normal,
                                             incident_ior, transmitted_ior, sample(generator));
-        return ScatterResult{direction.normalized(), albedo};
+        return ScatterResult{normalize(direction), albedo};
     }
 } // namespace pathtracer

@@ -23,8 +23,8 @@ TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
         const auto repeated = material.scatter(incoming, normal, true, replay);
         ASSERT_TRUE(scatter);
         ASSERT_TRUE(repeated);
-        EXPECT_GT(Vec3::dot(scatter->direction, normal), 0.0f);
-        EXPECT_NEAR(scatter->direction.length(), 1.0f, 1e-6f);
+        EXPECT_GT(dot(scatter->direction, normal), 0.0f);
+        EXPECT_NEAR(length(scatter->direction), 1.0f, 1e-6f);
         EXPECT_FLOAT_EQ(scatter->direction.x, repeated->direction.x);
         EXPECT_FLOAT_EQ(scatter->direction.y, repeated->direction.y);
         EXPECT_FLOAT_EQ(scatter->direction.z, repeated->direction.z);
@@ -68,7 +68,7 @@ TEST(Material, RoughMetalPerturbsReflection)
     ASSERT_TRUE(scatter);
     EXPECT_GT(scatter->direction.z, 0.0f);
     EXPECT_GT(scatter->direction.x * scatter->direction.x + scatter->direction.y * scatter->direction.y, 0.0f);
-    EXPECT_NEAR(scatter->direction.length(), 1.0f, 1e-6f);
+    EXPECT_NEAR(length(scatter->direction), 1.0f, 1e-6f);
 }
 
 TEST(Material, DielectricUsesEnteringStateForRefraction)
@@ -87,11 +87,11 @@ TEST(Material, DielectricUsesEnteringStateForRefraction)
         {
             const auto scatter = glass.scatter(incoming, normal, entering, generator);
             ASSERT_TRUE(scatter);
-            EXPECT_NEAR(scatter->direction.length(), 1.0f, 1e-6f);
+            EXPECT_NEAR(length(scatter->direction), 1.0f, 1e-6f);
             EXPECT_FLOAT_EQ(scatter->attenuation.x, 1.0f);
             EXPECT_FLOAT_EQ(scatter->attenuation.y, 1.0f);
             EXPECT_FLOAT_EQ(scatter->attenuation.z, 1.0f);
-            if (Vec3::dot(scatter->direction, normal) < 0.0f)
+            if (dot(scatter->direction, normal) < 0.0f)
             {
                 ++refractions;
                 EXPECT_NEAR(scatter->direction.x, refracted_x, 1e-6f);

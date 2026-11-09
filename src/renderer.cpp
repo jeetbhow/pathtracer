@@ -26,7 +26,7 @@ namespace pathtracer
 
     static Color skybox_color(const Ray& ray)
     {
-        const Vec3 unit_direction = ray.direction.normalized();
+        const Vec3 unit_direction = normalize(ray.direction);
         const float t = 0.5f * (unit_direction.y + 1.0f);
         return (1.0f - t) * Color{1.0f, 1.0f, 1.0f} + t * Color{0.5f, 0.7f, 1.0f};
     }

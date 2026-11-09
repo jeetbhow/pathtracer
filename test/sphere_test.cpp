@@ -48,7 +48,7 @@ TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
     ASSERT_TRUE(surface.has_value());
     EXPECT_EQ(&surface->material, sphere.material.get());
     EXPECT_FLOAT_EQ(surface->t, 2.0f);
-    EXPECT_LE(Vec3::dot(surface->incoming.direction, surface->normal), 0.0f);
+    EXPECT_LE(dot(surface->incoming.direction, surface->normal), 0.0f);
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, -4}, Vec3{0, 0, 1}}).has_value());
 }
 
@@ -94,7 +94,7 @@ TEST(Sphere, PreservesSmallRadiusAtLargeDistance)
     EXPECT_FLOAT_EQ(hit->t, 9999.0f);
     EXPECT_FLOAT_EQ(hit->position.z, -9999.0f);
     EXPECT_FLOAT_EQ(hit->normal.z, 1.0f);
-    EXPECT_FLOAT_EQ(hit->normal.length(), 1.0f);
+    EXPECT_FLOAT_EQ(length(hit->normal), 1.0f);
 
     // Cancellation must not turn a nearby miss into a tangent hit, either.
     EXPECT_FALSE(sphere.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}).has_value());
@@ -105,7 +105,7 @@ TEST(Sphere, InteriorReflectionStaysInTheShadingHemisphere)
     const Sphere sphere{Vec3{0, 0, 0}, 2};
     const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());
-    const Vec3 reflected = Vec3::reflect(hit->incoming.direction, hit->normal);
-    EXPECT_GT(Vec3::dot(reflected, hit->normal), 0.0f);
+    const Vec3 reflected = reflect(hit->incoming.direction, hit->normal);
+    EXPECT_GT(dot(reflected, hit->normal), 0.0f);
     EXPECT_FLOAT_EQ(reflected.z, 1.0f);
 }

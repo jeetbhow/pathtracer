@@ -27,9 +27,9 @@ namespace pathtracer
         const float vp_height = 2.0f * focal_length * tan(fov_radians / 2.0f);
         const float vp_width = vp_height * aspect_ratio;
 
-        const Vec3 forward = direction.normalized();
-        const Vec3 right = Vec3::cross(forward, up).normalized();
-        const Vec3 down = Vec3::cross(forward, right).normalized();
+        const Vec3 forward = normalize(direction);
+        const Vec3 right = normalize(cross(forward, up));
+        const Vec3 down = normalize(cross(forward, right));
         const Vec3 center = focal_length * forward;
 
         const Vec3 u = vp_width * right;

@@ -15,7 +15,7 @@ namespace pathtracer
     void Camera::initialize()
     {
         const Vec3 direction = look_at - position;
-        if (direction.length_squared() == 0.0f)
+        if (length_squared(direction) == 0.0f)
         {
             throw std::invalid_argument("Camera look_at must differ from position");
         }
