@@ -1,43 +1,37 @@
-# pathtracer
+# Roadmap
 
-A C++23 executable built with Meson.
-
-Install a C++ compiler and Meson (plus Ninja for Meson), then run:
-
-```sh
-meson setup build
-meson compile -C build
-meson test -C build
-./build/pathtracer
-```
-
-On Windows, run `build\pathtracer.exe`.
-
-With Make installed, you can also build and run with `make run`, or build and
-run the tests with `make test`. Both commands set up the build directory if needed.
-
-The executable entry point is `app/main.cpp`. It sets up the camera and scene,
-calls the renderer, and writes `image.ppm` in the working directory.
-
-Library sources live in `src/`, with public headers in `include/pathtracer/`.
-Include them as `"pathtracer/camera/camera.hpp"`, for example; library types and functions
-use the `pathtracer` namespace. Add new source files to `src/meson.build`.
-
-- `geometry/` groups `vec3` and `ray` in both the public headers and library
-  sources. They provide vector math and rays.
-- `camera/` groups `camera`, which generates rays from camera settings and image
-  dimensions, and `image`, which stores pixels and writes PPM output.
-- `object/` groups `object`, which defines objects, sphere intersections, and hit
-  records, and `material`, which defines the scattering interface and diffuse,
-  metal, and dielectric implementations.
-- `renderer` defines `Scene`, a collection of objects, and handles nearest-hit
-  selection, the pixel loop, sphere shading, and the sky background.
-
-Scene owns its objects, and each object owns its material. Renderer references
-Scene rather than copying it, so Scene must outlive every Renderer using it.
-Materials must also outlive any hit records that reference them.
-
-Google Test in `test/` links against the same pathtracer library as the executable.
-Test files follow the library component names; register new files in
-`test/meson.build`. Meson uses an installed Google Test or downloads the pinned
-fallback in `subprojects/gtest.wrap` (internet access required). Tests use C++23.
+- [x] Vector and color math, rays, and PPM image output.
+- [x] Perspective camera with image aspect ratio and configurable vertical FOV.
+- [x] Camera positioning, world-space look-at target, and up-vector orientation.
+- [x] Sphere intersections, surface normals, and front/back-face detection.
+- [x] Multiple scene objects with nearest-hit selection.
+- [x] Minimum ray-hit distance to reduce surface acne.
+- [x] Random subpixel sampling and configurable samples per pixel for antialiasing.
+- [x] Recursive path tracing with a bounce limit and sky background lighting.
+- [x] Lambertian diffuse scattering with color attenuation.
+- [x] Metal reflections with configurable roughness.
+- [x] Dielectric refraction, total internal reflection, and Schlick reflectance.
+- [x] Sample averaging and gamma-2 correction for image output.
+- [ ] Defocus blur: aperture-disk sampling and configurable focus distance.
+  `FocusPlane` scaffolding exists, but ray generation still uses a pinhole.
+- [ ] Render progress reporting.
+- [ ] Example scene: a randomized collection of spheres.
+- [ ] Motion blur using ray timestamps and moving spheres.
+- [ ] Axis-aligned bounding boxes and a bounding volume hierarchy (BVH).
+- [ ] Texture interface and surface UV coordinates.
+- [ ] Procedural checker textures.
+- [ ] Image textures and spherical texture mapping.
+- [ ] Perlin noise, turbulence, and marble textures.
+- [ ] Quadrilateral primitives and boxes assembled from quads.
+- [ ] Object instances with translation and rotation transforms.
+- [ ] Emissive materials and area lights, with emitted radiance in the renderer.
+- [ ] Participating media such as fog and smoke, with isotropic scattering.
+- [ ] Example scenes: Cornell box, smoke boxes, and a large scene combining features.
+- [ ] Stratified subpixel sampling.
+- [ ] Explicit probability density functions (PDFs) for sampling and evaluation.
+- [ ] Reusable orthonormal bases for cosine-weighted hemisphere sampling.
+- [ ] Scattering-PDF evaluation and PDF-weighted radiance estimation.
+- [ ] Importance sampling of light geometry, including quads and spheres.
+- [ ] Mixture PDFs combining material and light sampling.
+- [ ] Integrate specular reflection/refraction with the PDF-based renderer.
+- [ ] Example renders comparing sampling strategies and noise convergence.
