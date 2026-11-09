@@ -8,10 +8,11 @@ namespace pathtracer
     struct Viewport
     {
         // Coordinates are relative to the camera origin.
-        Vec3 pixel00;
-        Vec3 pixel_du;
-        Vec3 pixel_dv;
+        Vec3 pixel00{};
+        Vec3 pixel_du{};
+        Vec3 pixel_dv{};
         
-        Viewport(const Image& image, float fov);
+        Viewport() = default;
+        Viewport(const Image& image, Vec3 up, Vec3 direction, float fov, float focal_len);
     };
 } // namespace pathtracer

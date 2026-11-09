@@ -41,7 +41,10 @@ TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
     Scene scene;
     scene.objects.push_back(std::move(enclosure));
     Image image{3, 3};
-    const Renderer renderer{scene, Camera{image, 90.0f, 32}, 42};
+    Camera camera{image};
+    camera.samples = 32;
+    camera.initialize();
+    const Renderer renderer{scene, camera, 42};
     EXPECT_EQ(&renderer.render(), &image);
     ostringstream output;
     renderer.render().write_ppm(output);
@@ -68,7 +71,9 @@ TEST(Renderer, UsesTheReferencedScene)
 {
     Scene scene;
     Image image{1, 1};
-    const Camera camera{image, 90.0f, 1};
+    Camera camera{image};
+    camera.samples = 1;
+    camera.initialize();
     const Renderer renderer{scene, camera, 42};
 
     auto enclosure = make_unique<Sphere>(Vec3{0, 0, 0}, 2);

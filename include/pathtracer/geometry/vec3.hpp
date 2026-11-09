@@ -9,6 +9,8 @@ namespace pathtracer
         float z;
 
         static float dot(const Vec3& a, const Vec3& b);
+        // Right-handed cross product; inputs need not be unit vectors.
+        static Vec3 cross(const Vec3& a, const Vec3& b);
         static Vec3 proj_unit(const Vec3& a, const Vec3& b);
         static Vec3 reflect(const Vec3& incoming, const Vec3& normal);
         // Unit I and N, with N opposing I; reflection_sample is uniform in [0, 1).

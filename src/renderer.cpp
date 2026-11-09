@@ -58,7 +58,7 @@ namespace pathtracer
 
     Image& Renderer::render() const
     {
-        Image& image = camera_.image;
+        Image& image = camera_.image();
         for (size_t row = 0; row < image.height; ++row)
         {
             for (size_t col = 0; col < image.width; ++col)

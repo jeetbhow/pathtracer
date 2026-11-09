@@ -14,6 +14,15 @@ namespace pathtracer
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
+    Vec3 Vec3::cross(const Vec3& a, const Vec3& b)
+    {
+        return Vec3{
+            a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - a.y * b.x,
+        };
+    }
+
     // Assume a and b are unit vectors. Project a onto b.
     Vec3 Vec3::proj_unit(const Vec3 &a, const Vec3 &b)
     {

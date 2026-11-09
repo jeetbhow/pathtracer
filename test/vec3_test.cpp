@@ -38,6 +38,31 @@ TEST(Vec3, DotProduct)
     EXPECT_FLOAT_EQ(Vec3::dot(Vec3{1, 0, 0}, Vec3{0, 1, 0}), 0.0f);
 }
 
+TEST(Vec3, CrossProductUsesRightHandRule)
+{
+    const Vec3 x{1, 0, 0};
+    const Vec3 y{0, 1, 0};
+    const Vec3 z{0, 0, 1};
+
+    ExpectVecEq(Vec3::cross(x, y), 0, 0, 1);
+    ExpectVecEq(Vec3::cross(y, z), 1, 0, 0);
+    ExpectVecEq(Vec3::cross(z, x), 0, 1, 0);
+    ExpectVecEq(Vec3::cross(y, x), 0, 0, -1);
+}
+
+TEST(Vec3, CrossProductHandlesNonUnitAndParallelVectors)
+{
+    const Vec3 a{1, 2, 3};
+    const Vec3 b{4, -5, 6};
+    const Vec3 perpendicular = Vec3::cross(a, b);
+
+    ExpectVecEq(perpendicular, 27, 6, -13);
+    EXPECT_FLOAT_EQ(Vec3::dot(perpendicular, a), 0.0f);
+    EXPECT_FLOAT_EQ(Vec3::dot(perpendicular, b), 0.0f);
+    ExpectVecEq(Vec3::cross(a, 2.0f * a), 0, 0, 0);
+    ExpectVecEq(Vec3::cross(a, Vec3{0, 0, 0}), 0, 0, 0);
+}
+
 TEST(Vec3, Length)
 {
     const Vec3 vector{3, 4, 12};
