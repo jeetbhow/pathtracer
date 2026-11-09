@@ -3,8 +3,10 @@
 #include "pathtracer/geometry/ray.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 #include "pathtracer/camera/image.hpp"
+#include "pathtracer/object/object.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <random>
 
 namespace pathtracer
@@ -29,17 +31,6 @@ namespace pathtracer
         Viewport(const Image& image, Vec3 up, Vec3 forward, float fov, float focal_len);
     };
 
-    struct FocusPlane
-    {
-        float focus_distance = DEFAULT_FOCUS_DISTANCE;
-        Vec3 normal{};
-
-        FocusPlane() = default;
-        FocusPlane(Vec3 normal) : normal(normal) {}
-
-        Vec3 hit(Ray r);
-    };
-
     class Camera
     {
     public:
@@ -47,6 +38,7 @@ namespace pathtracer
         Vec3 up = DEFAULT_UP;
         Vec3 look_at = DEFAULT_LOOK_AT;
         float focal_length = DEFAULT_FOCAL_LENGTH;
+        float focus_distance = DEFAULT_FOCUS_DISTANCE;
         float fov = DEFAULT_FOV;
         unsigned int samples = DEFAULT_SAMPLES;
 
@@ -61,7 +53,7 @@ namespace pathtracer
     private:
         Image& image_;                                  // Non-owning: image must outlive this Camera and any Renderer holding a copy.
         Viewport viewport_;
-        FocusPlane focus_plane_;
+        std::shared_ptr<const Plane> focus_plane_;
     };
 
 } // namespace pathtracer

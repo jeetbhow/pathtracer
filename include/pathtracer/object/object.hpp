@@ -13,7 +13,7 @@ namespace pathtracer
     {
         float t;
         Vec3 position;
-        Vec3 normal; // Shading normal, oriented against the incoming ray.
+        Vec3 normal;
         const Material& material; // Non-owning; the material must outlive the hit record.
         Ray incoming;
         bool entering;
@@ -22,8 +22,13 @@ namespace pathtracer
     class Object
     {
     public:
+        explicit Object(Vec3 position = Vec3{}) : position(position)
+        {
+        }
+
         virtual ~Object() = default;
 
+        Vec3 position;
         std::unique_ptr<Material> material = std::make_unique<Diffuse>();
 
         virtual std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const = 0;
@@ -32,14 +37,25 @@ namespace pathtracer
 
     struct Sphere : public Object
     {
-        Vec3 center;
         float radius;
 
-        Sphere(const Vec3& center, float radius) : center(center), radius(radius)
+        Sphere(Vec3 position, float radius) : Object(position), radius(radius)
         {
         }
 
         std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const override;
         Vec3 normal(const Vec3& p) const override;
+    };
+
+    class Plane : public Object
+    {
+    public:
+        Plane(Vec3 position, Vec3 normal);
+
+        std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const override;
+        Vec3 normal(const Vec3& p) const override;
+
+    private:
+        Vec3 normal_;
     };
 } // namespace pathtracer

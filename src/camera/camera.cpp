@@ -56,7 +56,7 @@ namespace pathtracer
         }
 
         viewport_ = Viewport{image_, up, direction, fov, focal_length};
-        focus_plane_ = FocusPlane{direction};
+        focus_plane_ = std::make_shared<Plane>(position + focus_distance * direction, direction);
     }
 
     Ray Camera::generate_ray(size_t row, size_t col, mt19937& generator) const

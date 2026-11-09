@@ -4,6 +4,21 @@
 
 using namespace pathtracer;
 
+TEST(Sphere, PositionCanBeChangedThroughObjectInterface)
+{
+    Sphere sphere{Vec3{0, 0, -5}, 1};
+    Object& object = sphere;
+    EXPECT_FLOAT_EQ(object.position.z, -5);
+    object.position = Vec3{2, 0, -5};
+
+    EXPECT_FALSE(object.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}}));
+    const auto hit = object.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}});
+    ASSERT_TRUE(hit);
+    EXPECT_FLOAT_EQ(hit->t, 4);
+    EXPECT_FLOAT_EQ(hit->position.x, 2);
+    EXPECT_FLOAT_EQ(hit->normal.z, 1);
+}
+
 TEST(Sphere, ComputesSurfaceNormal)
 {
     const Sphere sphere{Vec3{0, 0, -3}, 2.0f};

@@ -1,5 +1,6 @@
 /build/
 /subprojects/*/
+/app/
 /app.exe
 /unit_tests
 /unit_tests.exe

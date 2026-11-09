@@ -13,7 +13,7 @@
 - [x] Dielectric refraction, total internal reflection, and Schlick reflectance.
 - [x] Sample averaging and gamma-2 correction for image output.
 - [ ] Defocus blur: aperture-disk sampling and configurable focus distance.
-  `FocusPlane` scaffolding exists, but ray generation still uses a pinhole.
+  Focus-plane setup exists, but ray generation still uses a pinhole.
 - [ ] Render progress reporting.
 - [ ] Example scene: a randomized collection of spheres.
 - [ ] Motion blur using ray timestamps and moving spheres.
