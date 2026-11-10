@@ -1,41 +1,21 @@
 #include "pathtracer/object/material.hpp"
+#include "pathtracer/geometry/sphere.hpp"
 
-#include <cmath>
-#include <numbers>
 #include <random>
 
-using std::cos;
 using std::mt19937;
 using std::nullopt;
-using std::numbers::pi_v;
 using std::optional;
-using std::sin;
-using std::sqrt;
 using std::uniform_real_distribution;
 
 namespace pathtracer
 {
-    static Vec3 random_unit_vector(mt19937& rng)
-    {
-        uniform_real_distribution<float> z_dist{-1, 1};
-        uniform_real_distribution<float> phi_dist{0.0f, 2.0f * pi_v<float>};
-
-        float z = z_dist(rng);
-        float phi = phi_dist(rng);
-        float r = sqrt(1 - z * z);
-
-        return Vec3
-        {
-            r * static_cast<float>(cos(phi)),
-            r * static_cast<float>(sin(phi)),
-            z
-        };
-    }
+    static constexpr Sphere unit_sphere{Vec3{0, 0, 0}, 1.0f};
 
     optional<ScatterResult> Diffuse::scatter(const Ray&, const Vec3& normal,
                                                  bool, mt19937& generator) const
     {
-        Vec3 direction = normal + random_unit_vector(generator);
+        Vec3 direction = normal + unit_sphere.random_point(generator);
         if (length_squared(direction) == 0.0f)
         {
             direction = normal;
@@ -49,7 +29,7 @@ namespace pathtracer
         Vec3 direction = reflect(normalize(incoming.direction), normal);
         if (roughness > 0.0f)
         {
-            direction += roughness * random_unit_vector(generator);
+            direction += roughness * unit_sphere.random_point(generator);
         }
         if (dot(direction, normal) <= 0.0f)
         {
@@ -68,4 +48,5 @@ namespace pathtracer
                                             incident_ior, transmitted_ior, sample(generator));
         return ScatterResult{normalize(direction), albedo};
     }
+
 } // namespace pathtracer

@@ -6,6 +6,7 @@ test_sources = files(
   'ray_test.cpp',
   'sphere_test.cpp',
   'plane_test.cpp',
+  'circle_test.cpp',
   'material_test.cpp',
   'image_test.cpp',
   'renderer_test.cpp',

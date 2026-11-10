@@ -36,8 +36,7 @@ TYPED_TEST_SUITE(EnclosedRenderer, EnclosedMaterials);
 
 TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
-    auto enclosure = make_unique<Sphere>(Vec3{0, 0, 0}, 2);
-    enclosure->material = make_unique<TypeParam>();
+    auto enclosure = make_unique<Object>(Sphere{Vec3{0, 0, 0}, 2}, make_unique<TypeParam>());
     Scene scene;
     scene.objects.push_back(std::move(enclosure));
     Image image{3, 3};
@@ -76,8 +75,7 @@ TEST(Renderer, UsesTheReferencedScene)
     camera.initialize();
     const Renderer renderer{scene, camera, 42};
 
-    auto enclosure = make_unique<Sphere>(Vec3{0, 0, 0}, 2);
-    enclosure->material = make_unique<AbsorbingMaterial>();
+    auto enclosure = make_unique<Object>(Sphere{Vec3{0, 0, 0}, 2}, make_unique<AbsorbingMaterial>());
     scene.objects.push_back(std::move(enclosure));
 
     ostringstream output;

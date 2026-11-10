@@ -1,112 +1,60 @@
 #include "pathtracer/object/object.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
-#include <cmath>
 #include <stdexcept>
+#include <utility>
 
 using std::nullopt;
 using std::optional;
-using std::sqrt;
 
 namespace pathtracer
 {
-    Plane::Plane(Vec3 position, Vec3 normal) : Object(position), normal_(normalize(normal))
+    Object::Object(Geometry geometry, std::unique_ptr<Material> material)
+        : material(std::move(material)), geometry_(std::move(geometry))
     {
-        if (length_squared(normal_) == 0.0f)
+        if (!this->material)
         {
-            throw std::invalid_argument("Plane normal must be nonzero");
+            throw std::invalid_argument("Object requires a material");
         }
     }
 
-    Vec3 Plane::normal(const Vec3&) const
+    Vec3& Object::position()
     {
-        return normal_;
+        return std::visit([](auto& shape) -> Vec3& { return shape.position; }, geometry_);
     }
 
-    optional<HitRecord> Plane::hit(const Ray& ray, float t_min) const
+    const Vec3& Object::position() const
     {
-        const float denominator = dot(normal_, ray.direction);
-        if (denominator == 0.0f)
+        return std::visit([](const auto& shape) -> const Vec3& { return shape.position; }, geometry_);
+    }
+
+    Vec3 Object::normal_at(Vec3 point) const
+    {
+        return std::visit([point](const auto& shape) { return shape.normal_at(point); }, geometry_);
+    }
+
+    optional<HitRecord> Object::hit(const Ray& ray, float t_min) const
+    {
+        const auto intersection = std::visit([&ray, t_min](const auto& shape) {
+            return shape.intersect(ray, t_min);
+        }, geometry_);
+        if (!intersection)
         {
             return nullopt;
         }
 
-        const float t = dot(position - ray.origin, normal_) / denominator;
-        if (t <= t_min)
-        {
-            return nullopt;
-        }
-
-        const bool entering = denominator < 0.0f;
-        return HitRecord{
-            t,
-            ray.at(t),
-            entering ? normal_ : -1.0f * normal_,
-            *material,
-            ray,
-            entering,
-        };
-    }
-
-    Vec3 Sphere::normal(const Vec3 &p) const
-    {
-        return (p - position) / radius;
-    }
-
-    optional<HitRecord> Sphere::hit(const Ray& ray, float t_min) const
-    {
-        const Vec3& direction = ray.direction;
-        // Promote before arithmetic so small radii survive at large distances.
-        const double dx = direction.x;
-        const double dy = direction.y;
-        const double dz = direction.z;
-        const double ox = static_cast<double>(ray.origin.x) - position.x;
-        const double oy = static_cast<double>(ray.origin.y) - position.y;
-        const double oz = static_cast<double>(ray.origin.z) - position.z;
-        const double a = dx * dx + dy * dy + dz * dz;
-        const double half_b = ox * dx + oy * dy + oz * dz;
-        const double c = ox * ox + oy * oy + oz * oz
-                         - static_cast<double>(radius) * radius;
-        const double discriminant = half_b * half_b - a * c;
-
-        if (a == 0.0f || discriminant < 0.0f)
-        {
-            return nullopt;
-        }
-
-        const double root = sqrt(discriminant);
-        double t = (-half_b - root) / a;
-
-        if (t <= t_min)
-        {
-            t = (-half_b + root) / a;
-            if (t <= t_min)
-            {
-                return nullopt;
-            }
-        }
-
-        const Vec3 hit_position
-        {
-            static_cast<float>(ray.origin.x + t * dx),
-            static_cast<float>(ray.origin.y + t * dy),
-            static_cast<float>(ray.origin.z + t * dz)
-        };
-
-        Vec3 outward_normal = normal(hit_position);
-        const float outward_normal_dot = dot(direction, outward_normal);
-
-        bool entering = outward_normal_dot < 0.0f ? true : false;
-        outward_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;
+        const Vec3 outward_normal = intersection->outward_normal;
+        const float outward_normal_dot = dot(ray.direction, outward_normal);
+        const Vec3 shading_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;
 
         return HitRecord
         {
-            static_cast<float>(t),
-            hit_position,
-            outward_normal,
+            intersection->t,
+            intersection->position,
+            shading_normal,
             *material,
             ray,
-            entering
+            outward_normal_dot < 0.0f
         };
     }
 } // namespace pathtracer
