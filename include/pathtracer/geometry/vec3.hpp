@@ -11,6 +11,7 @@ namespace pathtracer
         float z;
     };
 
+    bool operator==(Vec3 a, Vec3 b);
     Vec3 operator+(Vec3 a, Vec3 b);
     Vec3& operator+=(Vec3& a, Vec3 b);
     Vec3 operator-(Vec3 a, Vec3 b);

@@ -91,6 +91,11 @@ namespace pathtracer
         return Color{color.x * tint_color.x, color.y * tint_color.y, color.z * tint_color.z};
     }
 
+    bool operator==(Vec3 a, Vec3 b)
+    {
+        return a.x == b.x && a.y == b.y && a.z == b.z;
+    }
+
     Vec3 operator+(Vec3 a, Vec3 b)
     {
         return Vec3{a.x + b.x, a.y + b.y, a.z + b.z};
