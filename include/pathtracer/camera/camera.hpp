@@ -1,12 +1,11 @@
 #pragma once
 
 #include "pathtracer/geometry/ray.hpp"
+#include "pathtracer/geometry/plane.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 #include "pathtracer/camera/image.hpp"
-#include "pathtracer/object/object.hpp"
 
 #include <cstddef>
-#include <memory>
 #include <random>
 
 namespace pathtracer
@@ -18,24 +17,12 @@ namespace pathtracer
     static constexpr float DEFAULT_FOV = 90;
     static constexpr unsigned int DEFAULT_SAMPLES = 8;
     static constexpr float DEFAULT_FOCUS_DISTANCE = 5.0f;
-
-    struct Viewport
-    {
-        // Coordinates are relative to the camera origin.
-        Vec3 pixel00{};
-        Vec3 pixel_du{};
-        Vec3 pixel_dv{};
-
-        Viewport() = default;
-        // direction must be a unit vector.
-        Viewport(const Image& image, Vec3 up, Vec3 forward, float fov, float focal_len);
-    };
+    static constexpr float DEFAULT_APERTURE_RADIUS = 1.0f;
 
     class Camera
     {
     public:
         Vec3 position = DEFAULT_POSITION;
-        Vec3 up = DEFAULT_UP;
         Vec3 look_at = DEFAULT_LOOK_AT;
         float focal_length = DEFAULT_FOCAL_LENGTH;
         float focus_distance = DEFAULT_FOCUS_DISTANCE;
@@ -44,7 +31,7 @@ namespace pathtracer
 
         Camera(Image& image);
 
-        // Call after configuring the camera, before generating rays or rendering.
+        // Call once after configuring the camera, before generating rays or rendering.
         void initialize();
         Image& image() const { return image_; }
 
@@ -52,8 +39,16 @@ namespace pathtracer
 
     private:
         Image& image_; // Non-owning: image must outlive this Camera and any Renderer using it.
-        Viewport viewport_;
-        std::unique_ptr<const Plane> focus_plane_;
+
+        // Pixel offsets are relative to the camera position.
+        Vec3 pixel00_{};
+        Vec3 pixel_du_{};
+        Vec3 pixel_dv_{};
+
+        Circle aperture_;
+        Plane focus_plane_;
+
+        void initialize_viewport(Vec3 forward);
     };
 
 } // namespace pathtracer

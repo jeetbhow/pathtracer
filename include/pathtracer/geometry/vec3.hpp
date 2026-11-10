@@ -2,6 +2,8 @@
 
 namespace pathtracer
 {
+    float to_radians(float degrees);
+
     struct Vec3
     {
         float x;

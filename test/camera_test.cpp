@@ -89,7 +89,7 @@ TEST(Camera, TranslatingCameraAndTargetPreservesRayDirections)
     const Ray original = camera.generate_ray(0, 0, generator);
 
     camera.position = Vec3{3, -2, 5};
-    camera.look_at += Vec3{3, -2, 5};
+    camera.look_at = Vec3{3, -2, 4};
     camera.initialize();
     const Ray translated = camera.generate_ray(0, 0, replay);
 
@@ -105,8 +105,8 @@ TEST(Camera, GenerateRayAimsAtWorldSpaceTarget)
 {
     Image image{1, 1};
     Camera camera{image};
-    camera.position = Vec3{3, 4, 5};
     camera.look_at = Vec3{3, 1, 1};
+    camera.position = Vec3{3, 4, 5};
     camera.initialize();
     mt19937 generator{42};
     mt19937 replay{42};
@@ -123,7 +123,7 @@ TEST(Camera, GenerateRayAimsAtWorldSpaceTarget)
     EXPECT_NEAR(ray.direction.y, -0.6f - 0.8f * vertical, 1e-6f);
     EXPECT_NEAR(ray.direction.z, -0.8f + 0.6f * vertical, 1e-6f);
 
-    // Moving the camera reorients it toward the same target.
+    // Reinitialize from the new position with the same world-space target.
     camera.position = Vec3{3, 1, 6};
     camera.initialize();
     mt19937 moved_generator{42};
@@ -138,7 +138,7 @@ TEST(Camera, InitializeRejectsTargetAtCameraPosition)
     Image image{1, 1};
     Camera camera{image};
     camera.position = Vec3{3, 4, 5};
-    camera.look_at = camera.position;
+    camera.look_at = Vec3{3, 4, 5};
     EXPECT_THROW(camera.initialize(), invalid_argument);
 }
 

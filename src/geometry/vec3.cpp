@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 
 using std::clamp;
 using std::pow;
@@ -9,6 +10,11 @@ using std::sqrt;
 
 namespace pathtracer
 {
+    float to_radians(float degrees)
+    {
+        return degrees * std::numbers::pi_v<float> / 180.0f;
+    }
+
     float dot(Vec3 a, Vec3 b)
     {
         return a.x * b.x + a.y * b.y + a.z * b.z;
