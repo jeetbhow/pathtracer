@@ -15,7 +15,7 @@ namespace pathtracer
         optional<HitRecord> closest;
         for (const auto& object : scene.objects)
         {
-            const optional<HitRecord> hit = object->hit(ray);
+            const optional<HitRecord> hit = object.hit(ray);
             if (hit && (!closest || hit->t < closest->t))
             {
                 closest.emplace(*hit);
@@ -38,22 +38,22 @@ namespace pathtracer
             return Color{0, 0, 0};
         }
 
-        const auto scatter = hit.material.scatter(hit.incoming, hit.normal, hit.entering, generator_);
-        if (!scatter)
+        const auto scattering = scatter(hit.material, hit.incoming, hit.normal, hit.entering, generator_);
+        if (!scattering)
         {
             return Color{0, 0, 0};
         }
 
-        const Ray scattered{hit.position, scatter->direction};
+        const Ray scattered{hit.position, scattering->direction};
         optional<HitRecord> next = closest_hit(scattered, scene_);
 
         if (!next)
         {
-            return tint(skybox_color(scattered), scatter->attenuation);
+            return tint(skybox_color(scattered), scattering->attenuation);
         }
 
         --bounces_remaining_;
-        return tint(handle_hit(*next), scatter->attenuation);
+        return tint(handle_hit(*next), scattering->attenuation);
     }
 
     Image& Renderer::render() const

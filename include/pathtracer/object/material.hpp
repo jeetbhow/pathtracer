@@ -5,6 +5,7 @@
 
 #include <optional>
 #include <random>
+#include <variant>
 
 namespace pathtracer
 {
@@ -14,17 +15,7 @@ namespace pathtracer
         Color attenuation;
     };
 
-    class Material
-    {
-    public:
-        virtual ~Material() = default;
-
-        // Return a unit scatter direction and color attenuation, or no result for absorption.
-        virtual std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                                    bool entering, std::mt19937& generator) const = 0;
-    };
-
-    struct Diffuse : public Material
+    struct Diffuse
     {
         Color albedo;
 
@@ -33,10 +24,10 @@ namespace pathtracer
         }
 
         std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const override;
+                                            bool entering, std::mt19937& generator) const;
     };
 
-    struct Metal : public Material
+    struct Metal
     {
         Color albedo;
         float roughness;
@@ -47,10 +38,10 @@ namespace pathtracer
         }
 
         std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const override;
+                                            bool entering, std::mt19937& generator) const;
     };
 
-    struct Dielectric : public Material
+    struct Dielectric
     {
         Color albedo;
         float ior;
@@ -61,6 +52,12 @@ namespace pathtracer
         }
 
         std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const override;
+                                            bool entering, std::mt19937& generator) const;
     };
+
+    using Material = std::variant<Diffuse, Metal, Dielectric>;
+
+    // Return a unit direction and attenuation, or no result for absorption.
+    std::optional<ScatterResult> scatter(const Material& material, const Ray& incoming,
+                                         const Vec3& normal, bool entering, std::mt19937& generator);
 } // namespace pathtracer

@@ -49,4 +49,11 @@ namespace pathtracer
         return ScatterResult{normalize(direction), albedo};
     }
 
+    optional<ScatterResult> scatter(const Material& material, const Ray& incoming,
+                                   const Vec3& normal, bool entering, mt19937& generator)
+    {
+        return std::visit([&](const auto& concrete_material) {
+            return concrete_material.scatter(incoming, normal, entering, generator);
+        }, material);
+    }
 } // namespace pathtracer

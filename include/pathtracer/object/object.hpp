@@ -4,7 +4,6 @@
 #include "pathtracer/geometry/sphere.hpp"
 #include "pathtracer/object/material.hpp"
 
-#include <memory>
 #include <optional>
 #include <variant>
 
@@ -25,9 +24,9 @@ namespace pathtracer
     class Object
     {
     public:
-        Object(Geometry geometry, std::unique_ptr<Material> material);
+        Object(Geometry geometry, Material material);
 
-        std::unique_ptr<Material> material;
+        Material material;
 
         Vec3& position();
         const Vec3& position() const;

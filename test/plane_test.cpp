@@ -1,16 +1,13 @@
 #include "pathtracer/object/object.hpp"
 
 #include <gtest/gtest.h>
-#include <memory>
 #include <stdexcept>
-
-using std::make_unique;
 
 using namespace pathtracer;
 
 TEST(Plane, PositionCanBeChangedThroughObjectInterface)
 {
-    Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, make_unique<Diffuse>()};
+    Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, Diffuse{}};
     Object& object = plane;
     EXPECT_FLOAT_EQ(object.position().y, -1);
     object.position() = Vec3{0, -3, 0};
@@ -24,7 +21,7 @@ TEST(Plane, PositionCanBeChangedThroughObjectInterface)
 
 TEST(Plane, ComputesUnitNormalIndependentOfPosition)
 {
-    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 0.6f, 0.8f}}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 0.6f, 0.8f}}, Diffuse{}};
     const Object& object = plane;
     const Vec3 normal = object.normal_at(Vec3{5, 10, -3});
     EXPECT_FLOAT_EQ(normal.x, 0);
@@ -34,7 +31,7 @@ TEST(Plane, ComputesUnitNormalIndependentOfPosition)
 
 TEST(Plane, IntersectsNonUnitRayThroughObjectInterface)
 {
-    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, Diffuse{}};
     const Object& object = plane;
     const Ray ray{Vec3{3, 3, 5}, Vec3{0, -2, 0}};
     const auto hit = object.hit(ray);
@@ -45,13 +42,13 @@ TEST(Plane, IntersectsNonUnitRayThroughObjectInterface)
     EXPECT_FLOAT_EQ(hit->position.z, 5);
     EXPECT_FLOAT_EQ(hit->normal.y, 1);
     EXPECT_TRUE(hit->entering);
-    EXPECT_EQ(&hit->material, plane.material.get());
+    EXPECT_EQ(&hit->material, &plane.material);
     EXPECT_FLOAT_EQ(hit->incoming.direction.y, -2);
 }
 
 TEST(Plane, IntersectsTiltedPlane)
 {
-    const Object plane{Plane{Vec3{0, 1, 0}, normalize(Vec3{0, 1, 1})}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, 1, 0}, normalize(Vec3{0, 1, 1})}, Diffuse{}};
     const auto hit = plane.hit(Ray{Vec3{2, 3, 4}, Vec3{0, -1, -1}});
     ASSERT_TRUE(hit);
     EXPECT_NEAR(hit->t, 3, 1e-6f);
@@ -62,7 +59,7 @@ TEST(Plane, IntersectsTiltedPlane)
 
 TEST(Plane, FlipsShadingNormalForBackFaceHit)
 {
-    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, Diffuse{}};
     const auto hit = plane.hit(Ray{Vec3{0, -3, 0}, Vec3{0, 1, 0}});
     ASSERT_TRUE(hit);
     EXPECT_FLOAT_EQ(hit->t, 2);
@@ -73,7 +70,7 @@ TEST(Plane, FlipsShadingNormalForBackFaceHit)
 
 TEST(Plane, RejectsParallelCoplanarAndStationaryRays)
 {
-    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, Diffuse{}};
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{1, 0, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, -1, 0}, Vec3{1, 0, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, 0}}));
@@ -81,7 +78,7 @@ TEST(Plane, RejectsParallelCoplanarAndStationaryRays)
 
 TEST(Plane, RejectsHitsBehindOriginAndAtOrBelowMinimumDistance)
 {
-    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, make_unique<Diffuse>()};
+    const Object plane{Plane{Vec3{0, -1, 0}, Vec3{0, 1, 0}}, Diffuse{}};
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 1, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, -1, 0}, Vec3{0, -1, 0}}));
     const Ray ray{Vec3{0, 0, 0}, Vec3{0, -1, 0}};

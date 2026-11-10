@@ -1,7 +1,6 @@
 #include "pathtracer/object/object.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
-#include <stdexcept>
 #include <utility>
 
 using std::nullopt;
@@ -9,13 +8,9 @@ using std::optional;
 
 namespace pathtracer
 {
-    Object::Object(Geometry geometry, std::unique_ptr<Material> material)
+    Object::Object(Geometry geometry, Material material)
         : material(std::move(material)), geometry_(std::move(geometry))
     {
-        if (!this->material)
-        {
-            throw std::invalid_argument("Object requires a material");
-        }
     }
 
     Vec3& Object::position()
@@ -52,7 +47,7 @@ namespace pathtracer
             intersection->t,
             intersection->position,
             shading_normal,
-            *material,
+            material,
             ray,
             outward_normal_dot < 0.0f
         };

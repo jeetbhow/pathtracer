@@ -10,8 +10,7 @@ using namespace pathtracer;
 
 TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
 {
-    const Diffuse diffuse{Color{0.2f, 0.4f, 0.6f}};
-    const Material& material = diffuse;
+    const Material material = Diffuse{Color{0.2f, 0.4f, 0.6f}};
     const Ray incoming{Vec3{0, 0, 0}, Vec3{0, 0, -2}};
     const Vec3 normal{0, 0, 1};
     mt19937 generator{42};
@@ -19,8 +18,8 @@ TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
 
     for (int i = 0; i < 32; ++i)
     {
-        const auto scatter = material.scatter(incoming, normal, true, generator);
-        const auto repeated = material.scatter(incoming, normal, true, replay);
+        const auto scatter = pathtracer::scatter(material, incoming, normal, true, generator);
+        const auto repeated = pathtracer::scatter(material, incoming, normal, true, replay);
         ASSERT_TRUE(scatter);
         ASSERT_TRUE(repeated);
         EXPECT_GT(dot(scatter->direction, normal), 0.0f);
@@ -54,9 +53,9 @@ TEST(Material, SmoothMetalReflectsWithoutConsumingRandomSamples)
 
 TEST(Material, MetalAbsorbsReflectionsBelowSurface)
 {
-    const Metal metal;
+    const Material material = Metal{};
     mt19937 generator{42};
-    EXPECT_FALSE(metal.scatter(Ray{Vec3{}, Vec3{0, 1, 0}}, Vec3{0, 1, 0}, true, generator));
+    EXPECT_FALSE(scatter(material, Ray{Vec3{}, Vec3{0, 1, 0}}, Vec3{0, 1, 0}, true, generator));
 }
 
 TEST(Material, RoughMetalPerturbsReflection)

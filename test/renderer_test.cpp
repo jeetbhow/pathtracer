@@ -2,43 +2,27 @@
 #include "pathtracer/object/material.hpp"
 
 #include <gtest/gtest.h>
-#include <memory>
 #include <sstream>
 #include <string>
-#include <utility>
 
 using std::istringstream;
-using std::make_unique;
-using std::mt19937;
-using std::nullopt;
-using std::optional;
 using std::ostringstream;
 using std::string;
 
 using namespace pathtracer;
-
-class AbsorbingMaterial : public Material
-{
-public:
-    optional<ScatterResult> scatter(const Ray&, const Vec3&, bool, mt19937&) const override
-    {
-        return nullopt;
-    }
-};
 
 template <typename T>
 class EnclosedRenderer : public testing::Test
 {
 };
 
-using EnclosedMaterials = testing::Types<Diffuse, Metal, AbsorbingMaterial>;
+using EnclosedMaterials = testing::Types<Diffuse, Metal>;
 TYPED_TEST_SUITE(EnclosedRenderer, EnclosedMaterials);
 
 TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
-    auto enclosure = make_unique<Object>(Sphere{Vec3{0, 0, 0}, 2}, make_unique<TypeParam>());
     Scene scene;
-    scene.objects.push_back(std::move(enclosure));
+    scene.objects.emplace_back(Sphere{Vec3{0, 0, 0}, 2}, TypeParam{});
     Image image{3, 3};
     Camera camera{image};
     camera.samples = 32;
@@ -75,8 +59,7 @@ TEST(Renderer, UsesTheReferencedScene)
     camera.initialize();
     const Renderer renderer{scene, camera, 42};
 
-    auto enclosure = make_unique<Object>(Sphere{Vec3{0, 0, 0}, 2}, make_unique<AbsorbingMaterial>());
-    scene.objects.push_back(std::move(enclosure));
+    scene.objects.emplace_back(Sphere{Vec3{0, 0, 0}, 2}, Diffuse{Color{0, 0, 0}});
 
     ostringstream output;
     renderer.render().write_ppm(output);

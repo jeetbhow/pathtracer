@@ -5,7 +5,6 @@
 #include "pathtracer/object/object.hpp"
 
 #include <vector>
-#include <memory>
 #include <cstdint>
 #include <random>
 
@@ -13,7 +12,8 @@ namespace pathtracer
 {
     struct Scene
     {
-        std::vector<std::unique_ptr<Object>> objects;
+        // Hit records borrow materials from these objects and require stable storage.
+        std::vector<Object> objects;
     };
 
     class Renderer
