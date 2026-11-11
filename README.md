@@ -2,6 +2,12 @@
 
 A C++ path tracer. Work in progress.
 
+![28° vertical field of view](docs/fov-28.png)
+
+![48° vertical field of view](docs/fov-48.png)
+
+![74° vertical field of view](docs/fov-74.png)
+
 ## Install dependencies
 
 Requires a C++23 compiler, Meson, Ninja, and pkg-config. On Ubuntu/Debian:
