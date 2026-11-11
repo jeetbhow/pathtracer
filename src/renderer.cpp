@@ -10,12 +10,12 @@ using std::size_t;
 
 namespace pathtracer
 {
-    static optional<HitRecord> closest_hit(const Ray& ray, const Scene& scene)
+    static optional<ShadingContext> closest_hit(const Ray& ray, const Scene& scene)
     {
-        optional<HitRecord> closest;
+        optional<ShadingContext> closest;
         for (const auto& object : scene.objects)
         {
-            const optional<HitRecord> hit = object.hit(ray);
+            const optional<ShadingContext> hit = object.hit(ray);
             if (hit && (!closest || hit->t < closest->t))
             {
                 closest.emplace(*hit);
@@ -31,21 +31,21 @@ namespace pathtracer
         return (1.0f - t) * Color{1.0f, 1.0f, 1.0f} + t * Color{0.5f, 0.7f, 1.0f};
     }
 
-    Color Renderer::handle_hit(const HitRecord& hit) const
+    Color Renderer::handle_hit(const ShadingContext& hit) const
     {
         if (bounces_remaining_ <= 0)
         {
             return Color{0, 0, 0};
         }
 
-        const auto scattering = scatter(hit.material, hit.incoming, hit.normal, hit.entering, generator_);
+        const auto scattering = scatter(hit, generator_);
         if (!scattering)
         {
             return Color{0, 0, 0};
         }
 
         const Ray scattered{hit.position, scattering->direction};
-        optional<HitRecord> next = closest_hit(scattered, scene_);
+        optional<ShadingContext> next = closest_hit(scattered, scene_);
 
         if (!next)
         {
@@ -68,7 +68,7 @@ namespace pathtracer
                 for (unsigned int sample = 0; sample < camera_.samples; ++sample)
                 {
                     const Ray ray = camera_.generate_ray(row, col, generator_);
-                    const optional<HitRecord> hit = closest_hit(ray, scene_);
+                    const optional<ShadingContext> hit = closest_hit(ray, scene_);
 
                     if (hit)
                     {

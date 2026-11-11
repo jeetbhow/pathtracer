@@ -12,7 +12,7 @@ namespace pathtracer
 {
     struct Scene
     {
-        // Hit records borrow materials from these objects and require stable storage.
+        // Shading contexts borrow materials from these objects and require stable storage.
         std::vector<Object> objects;
     };
 
@@ -30,7 +30,7 @@ namespace pathtracer
 
         Image& render() const;
     private:
-        Color handle_hit(const HitRecord& hit) const;
+        Color handle_hit(const ShadingContext& hit) const;
 
         const int max_bounces_ = 8;
         mutable int bounces_remaining_ = max_bounces_;

@@ -28,7 +28,7 @@ namespace pathtracer
         return std::visit([point](const auto& shape) { return shape.normal_at(point); }, geometry_);
     }
 
-    optional<HitRecord> Object::hit(const Ray& ray, float t_min) const
+    optional<ShadingContext> Object::hit(const Ray& ray, float t_min) const
     {
         const auto intersection = std::visit([&ray, t_min](const auto& shape) {
             return shape.intersect(ray, t_min);
@@ -42,7 +42,7 @@ namespace pathtracer
         const float outward_normal_dot = dot(ray.direction, outward_normal);
         const Vec3 shading_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;
 
-        return HitRecord
+        return ShadingContext
         {
             intersection->t,
             intersection->position,

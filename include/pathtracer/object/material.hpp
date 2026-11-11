@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pathtracer/geometry/ray.hpp"
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <optional>
@@ -9,6 +8,8 @@
 
 namespace pathtracer
 {
+    struct ShadingContext;
+
     struct ScatterResult
     {
         Vec3 direction;
@@ -23,8 +24,7 @@ namespace pathtracer
         {
         }
 
-        std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const;
+        std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
 
     struct Metal
@@ -37,8 +37,7 @@ namespace pathtracer
         {
         }
 
-        std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const;
+        std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
 
     struct Dielectric
@@ -51,13 +50,11 @@ namespace pathtracer
         {
         }
 
-        std::optional<ScatterResult> scatter(const Ray& incoming, const Vec3& normal,
-                                            bool entering, std::mt19937& generator) const;
+        std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
 
     using Material = std::variant<Diffuse, Metal, Dielectric>;
 
     // Return a unit direction and attenuation, or no result for absorption.
-    std::optional<ScatterResult> scatter(const Material& material, const Ray& incoming,
-                                         const Vec3& normal, bool entering, std::mt19937& generator);
+    std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator);
 } // namespace pathtracer

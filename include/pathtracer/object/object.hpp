@@ -9,12 +9,12 @@
 
 namespace pathtracer
 {
-    struct HitRecord
+    struct ShadingContext
     {
         float t;
         Vec3 position;
         Vec3 normal;
-        const Material& material; // Non-owning; the material must outlive the hit record.
+        const Material& material; // Non-owning; the material must outlive the shading context.
         Ray incoming;
         bool entering;
     };
@@ -30,7 +30,7 @@ namespace pathtracer
 
         Vec3& position();
         const Vec3& position() const;
-        std::optional<HitRecord> hit(const Ray& ray, float t_min = 0.001f) const;
+        std::optional<ShadingContext> hit(const Ray& ray, float t_min = 0.001f) const;
         Vec3 normal_at(Vec3 point) const;
 
     private:
