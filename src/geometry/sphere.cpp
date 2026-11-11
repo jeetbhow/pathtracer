@@ -14,6 +14,10 @@ using std::uniform_real_distribution;
 
 namespace pathtracer
 {
+    Sphere::Sphere(Vec3 position, float radius) : Geometry(position), radius(radius)
+    {
+    }
+
     Vec3 Sphere::normal_at(Vec3 point) const
     {
         return (point - position) / radius;

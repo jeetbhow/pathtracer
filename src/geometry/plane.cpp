@@ -15,7 +15,7 @@ using std::uniform_real_distribution;
 
 namespace pathtracer
 {
-    Plane::Plane(Vec3 position, Vec3 normal) : position(position), normal(normal)
+    Plane::Plane(Vec3 position, Vec3 normal) : Geometry(position), normal(normal)
     {
         if (length_squared(normal) == 0.0f)
         {

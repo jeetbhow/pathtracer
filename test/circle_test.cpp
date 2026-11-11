@@ -1,13 +1,31 @@
 #include "pathtracer/geometry/plane.hpp"
+#include "pathtracer/object/object.hpp"
 
 #include <gtest/gtest.h>
 #include <array>
 #include <cmath>
+#include <memory>
 #include <random>
+#include <utility>
 
 using std::mt19937;
 
 using namespace pathtracer;
+
+TEST(Circle, PreservesRadiusCheckThroughPlaneInterface)
+{
+    std::unique_ptr<Plane> geometry = std::make_unique<Circle>(Vec3{0, 0, -3}, Vec3{0, 0, 1}, 1);
+    const Object circle{std::move(geometry), Diffuse{}};
+
+    const Ray inside{Vec3{0.5f, 0, 0}, Vec3{0, 0, -1}};
+    const auto hit = circle.hit(inside);
+    ASSERT_TRUE(hit);
+    EXPECT_FLOAT_EQ(hit->t, 3.0f);
+    EXPECT_EQ(hit->normal, (Vec3{0, 0, 1}));
+    EXPECT_EQ(&hit->material, &circle.material);
+    EXPECT_FALSE(circle.hit(inside, 3.0f));
+    EXPECT_FALSE(circle.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}));
+}
 
 TEST(Circle, RandomPointUsesSuppliedGeneratorReproducibly)
 {

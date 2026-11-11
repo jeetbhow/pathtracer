@@ -11,7 +11,7 @@ using std::uniform_real_distribution;
 
 namespace pathtracer
 {
-    static constexpr Sphere unit_sphere{Vec3{0, 0, 0}, 1.0f};
+    static const Sphere unit_sphere{Vec3{0, 0, 0}, 1.0f};
 
     optional<ScatterResult> Diffuse::scatter(const ShadingContext& hit, mt19937& generator) const
     {

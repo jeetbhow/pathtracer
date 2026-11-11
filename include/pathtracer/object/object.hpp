@@ -1,11 +1,10 @@
 #pragma once
 
-#include "pathtracer/geometry/plane.hpp"
-#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/geometry/geometry.hpp"
 #include "pathtracer/object/material.hpp"
 
 #include <optional>
-#include <variant>
+#include <memory>
 
 namespace pathtracer
 {
@@ -19,13 +18,11 @@ namespace pathtracer
         bool entering;
     };
 
-    using Geometry = std::variant<Sphere, Plane, Circle>;
-
     struct Object
     {
-        Object(Geometry geometry, Material material);
+        Object(std::unique_ptr<Geometry> geometry, Material material);
 
-        Geometry geometry;
+        std::unique_ptr<Geometry> geometry;
         Material material;
 
         Vec3& position();

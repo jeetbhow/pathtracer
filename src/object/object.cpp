@@ -2,37 +2,41 @@
 #include "pathtracer/geometry/vec3.hpp"
 
 #include <utility>
+#include <stdexcept>
 
 using std::nullopt;
 using std::optional;
 
 namespace pathtracer
 {
-    Object::Object(Geometry geometry, Material material)
+    Object::Object(std::unique_ptr<Geometry> geometry, Material material)
         : geometry(std::move(geometry)), material(std::move(material))
     {
+        if (!this->geometry)
+        {
+            throw std::invalid_argument("Object geometry must not be null");
+        }
     }
 
     Vec3& Object::position()
     {
-        return std::visit([](auto& shape) -> Vec3& { return shape.position; }, geometry);
+        return geometry->position;
     }
 
     const Vec3& Object::position() const
     {
-        return std::visit([](const auto& shape) -> const Vec3& { return shape.position; }, geometry);
+        return geometry->position;
     }
 
     Vec3 Object::normal_at(Vec3 point) const
     {
-        return std::visit([point](const auto& shape) { return shape.normal_at(point); }, geometry);
+        return geometry->normal_at(point);
     }
 
     optional<ShadingContext> Object::hit(const Ray& ray, float t_min) const
     {
-        const auto intersection = std::visit([&ray, t_min](const auto& shape) {
-            return shape.intersect(ray, t_min);
-        }, geometry);
+        const auto intersection = geometry->intersect(ray, t_min);
+        
         if (!intersection)
         {
             return nullopt;

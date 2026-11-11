@@ -1,6 +1,8 @@
+#include "pathtracer/geometry/sphere.hpp"
 #include "pathtracer/renderer.hpp"
 #include "pathtracer/object/material.hpp"
 
+#include <memory>
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string>
@@ -22,7 +24,7 @@ TYPED_TEST_SUITE(EnclosedRenderer, EnclosedMaterials);
 TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
 {
     Scene scene;
-    scene.objects.emplace_back(Sphere{Vec3{0, 0, 0}, 2}, TypeParam{});
+    scene.objects.emplace_back(std::make_unique<Sphere>(Vec3{0, 0, 0}, 2), TypeParam{});
     Image image{3, 3};
     Camera camera{image};
     camera.samples = 32;
@@ -59,7 +61,7 @@ TEST(Renderer, UsesTheReferencedScene)
     camera.initialize();
     const Renderer renderer{scene, camera, 42};
 
-    scene.objects.emplace_back(Sphere{Vec3{0, 0, 0}, 2}, Diffuse{Color{0, 0, 0}});
+    scene.objects.emplace_back(std::make_unique<Sphere>(Vec3{0, 0, 0}, 2), Diffuse{Color{0, 0, 0}});
 
     ostringstream output;
     renderer.render().write_ppm(output);
