@@ -1,36 +1,67 @@
-# Roadmap
+# Pathtracer
 
-- [x] Vector and color math, rays, and PPM image output.
-- [x] Perspective camera with image aspect ratio and configurable vertical FOV.
-- [x] Camera positioning, world-space look-at target, and up-vector orientation.
-- [x] Sphere intersections, surface normals, and front/back-face detection.
-- [x] Multiple scene objects with nearest-hit selection.
-- [x] Minimum ray-hit distance to reduce surface acne.
-- [x] Random subpixel sampling and configurable samples per pixel for antialiasing.
-- [x] Recursive path tracing with a bounce limit and sky background lighting.
-- [x] Lambertian diffuse scattering with color attenuation.
-- [x] Metal reflections with configurable roughness.
-- [x] Dielectric refraction, total internal reflection, and Schlick reflectance.
-- [x] Sample averaging and gamma-2 correction for image output.
-- [ ] Defocus blur: aperture-disk sampling and configurable focus distance.
-- [ ] Render progress reporting.
-- [ ] Example scene: a randomized collection of spheres.
-- [ ] Motion blur using ray timestamps and moving spheres.
-- [ ] Axis-aligned bounding boxes and a bounding volume hierarchy (BVH).
-- [ ] Texture interface and surface UV coordinates.
-- [ ] Procedural checker textures.
-- [ ] Image textures and spherical texture mapping.
-- [ ] Perlin noise, turbulence, and marble textures.
-- [ ] Quadrilateral primitives and boxes assembled from quads.
-- [ ] Object instances with translation and rotation transforms.
-- [ ] Emissive materials and area lights, with emitted radiance in the renderer.
-- [ ] Participating media such as fog and smoke, with isotropic scattering.
-- [ ] Example scenes: Cornell box, smoke boxes, and a large scene combining features.
-- [ ] Stratified subpixel sampling.
-- [ ] Explicit probability density functions (PDFs) for sampling and evaluation.
-- [ ] Reusable orthonormal bases for cosine-weighted hemisphere sampling.
-- [ ] Scattering-PDF evaluation and PDF-weighted radiance estimation.
-- [ ] Importance sampling of light geometry, including quads and spheres.
-- [ ] Mixture PDFs combining material and light sampling.
-- [ ] Integrate specular reflection/refraction with the PDF-based renderer.
-- [ ] Example renders comparing sampling strategies and noise convergence.
+A C++ path tracer. Work in progress.
+
+## Install dependencies
+
+Requires a C++23 compiler, Meson, Ninja, and pkg-config. On Ubuntu/Debian:
+
+```sh
+sudo apt update
+sudo apt install build-essential meson ninja-build pkg-config
+```
+
+Meson downloads GoogleTest during setup if it is not already installed, so the
+first setup may require internet access.
+
+## Create a local scene
+
+The build requires `app/main.cpp`, which is intentionally ignored by Git. If you
+do not already have one, create `app/` and save this example as `app/main.cpp`:
+
+```cpp
+#include "pathtracer/geometry/sphere.hpp"
+#include "pathtracer/renderer.hpp"
+
+#include <fstream>
+#include <memory>
+
+using namespace pathtracer;
+
+int main() {
+    Image image{400, 225};
+    Camera camera{image};
+    camera.initialize();
+
+    Scene scene;
+    scene.objects.emplace_back(
+        std::make_unique<Sphere>(Vec3{0, 0, -3}, 1.0f),
+        Diffuse{Color{0.7f, 0.3f, 0.3f}});
+
+    Renderer renderer{scene, camera};
+    renderer.render();
+
+    std::ofstream output{"image.ppm"};
+    image.write_ppm(output);
+    return output ? 0 : 1;
+}
+```
+
+## Build and run
+
+From the repository root:
+
+```sh
+meson setup build
+meson compile -C build
+./build/pathtracer
+```
+
+The default build enables release optimizations. The example writes `image.ppm`
+to the current directory. You can also use `make build` and `make run`.
+
+To install the executable system-wide after building:
+
+```sh
+sudo meson install -C build
+```
