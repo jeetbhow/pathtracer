@@ -9,30 +9,30 @@ using std::optional;
 namespace pathtracer
 {
     Object::Object(Geometry geometry, Material material)
-        : material(std::move(material)), geometry_(std::move(geometry))
+        : geometry(std::move(geometry)), material(std::move(material))
     {
     }
 
     Vec3& Object::position()
     {
-        return std::visit([](auto& shape) -> Vec3& { return shape.position; }, geometry_);
+        return std::visit([](auto& shape) -> Vec3& { return shape.position; }, geometry);
     }
 
     const Vec3& Object::position() const
     {
-        return std::visit([](const auto& shape) -> const Vec3& { return shape.position; }, geometry_);
+        return std::visit([](const auto& shape) -> const Vec3& { return shape.position; }, geometry);
     }
 
     Vec3 Object::normal_at(Vec3 point) const
     {
-        return std::visit([point](const auto& shape) { return shape.normal_at(point); }, geometry_);
+        return std::visit([point](const auto& shape) { return shape.normal_at(point); }, geometry);
     }
 
     optional<ShadingContext> Object::hit(const Ray& ray, float t_min) const
     {
         const auto intersection = std::visit([&ray, t_min](const auto& shape) {
             return shape.intersect(ray, t_min);
-        }, geometry_);
+        }, geometry);
         if (!intersection)
         {
             return nullopt;

@@ -21,19 +21,16 @@ namespace pathtracer
 
     using Geometry = std::variant<Sphere, Plane, Circle>;
 
-    class Object
+    struct Object
     {
-    public:
         Object(Geometry geometry, Material material);
 
+        Geometry geometry;
         Material material;
 
         Vec3& position();
         const Vec3& position() const;
         std::optional<ShadingContext> hit(const Ray& ray, float t_min = 0.001f) const;
         Vec3 normal_at(Vec3 point) const;
-
-    private:
-        Geometry geometry_;
     };
 } // namespace pathtracer
