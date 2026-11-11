@@ -8,8 +8,7 @@
 #include <cstddef>
 #include <random>
 
-namespace pathtracer
-{
+namespace pathtracer {
     static constexpr float DEFAULT_FOCAL_LENGTH = 1.0f;
     static constexpr Vec3 DEFAULT_POSITION{0, 0, 0};
     static constexpr Vec3 DEFAULT_UP{0, 1, 0};
@@ -19,8 +18,7 @@ namespace pathtracer
     static constexpr float DEFAULT_FOCUS_DISTANCE = 5.0f;
     static constexpr float DEFAULT_APERTURE_RADIUS = 1.0f;
 
-    class Camera
-    {
+    class Camera {
     public:
         Vec3 position = DEFAULT_POSITION;
         Vec3 look_at = DEFAULT_LOOK_AT;
@@ -33,7 +31,9 @@ namespace pathtracer
 
         // Call once after configuring the camera, before generating rays or rendering.
         void initialize();
-        Image& image() const { return image_; }
+        Image& image() const {
+            return image_;
+        }
 
         Ray generate_ray(std::size_t row, std::size_t col, std::mt19937& generator) const;
 

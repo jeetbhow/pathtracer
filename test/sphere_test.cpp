@@ -6,8 +6,7 @@
 
 using namespace pathtracer;
 
-TEST(Sphere, PositionCanBeChangedThroughObjectInterface)
-{
+TEST(Sphere, PositionCanBeChangedThroughObjectInterface) {
     Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     Object& object = sphere;
     EXPECT_FLOAT_EQ(object.position().z, -5);
@@ -21,8 +20,7 @@ TEST(Sphere, PositionCanBeChangedThroughObjectInterface)
     EXPECT_FLOAT_EQ(hit->normal.z, 1);
 }
 
-TEST(Sphere, ComputesSurfaceNormal)
-{
+TEST(Sphere, ComputesSurfaceNormal) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -3}, 2.0f), Diffuse{}};
     const Object& object = sphere;
     const Vec3 normal = object.normal_at(Vec3{0, 2, -3});
@@ -31,8 +29,7 @@ TEST(Sphere, ComputesSurfaceNormal)
     EXPECT_FLOAT_EQ(normal.z, 0.0f);
 }
 
-TEST(Sphere, ReturnsNearestHitForNonUnitRay)
-{
+TEST(Sphere, ReturnsNearestHitForNonUnitRay) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     const Object& object = sphere;
     const auto hit = object.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -2}});
@@ -47,8 +44,7 @@ TEST(Sphere, ReturnsNearestHitForNonUnitRay)
     EXPECT_FLOAT_EQ(hit->normal.z, 1.0f);
 }
 
-TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
-{
+TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     const auto inside = sphere.hit(Ray{Vec3{0, 0, -5}, Vec3{1, 0, 0}});
     ASSERT_TRUE(inside.has_value());
@@ -69,8 +65,7 @@ TEST(Sphere, ReturnsExitHitWhenRayStartsInsideOrOnSurface)
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, -4}, Vec3{0, 0, 1}}).has_value());
 }
 
-TEST(Sphere, ReturnsTangentHit)
-{
+TEST(Sphere, ReturnsTangentHit) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     const auto hit = sphere.hit(Ray{Vec3{1, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());
@@ -84,8 +79,7 @@ TEST(Sphere, ReturnsTangentHit)
     EXPECT_FLOAT_EQ(hit->normal.z, 0.0f);
 }
 
-TEST(Sphere, SkipsRootsAtOrBelowMinimumDistance)
-{
+TEST(Sphere, SkipsRootsAtOrBelowMinimumDistance) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     const Ray ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}};
 
@@ -95,16 +89,14 @@ TEST(Sphere, SkipsRootsAtOrBelowMinimumDistance)
     EXPECT_FALSE(sphere.hit(ray, 6.0f).has_value());
 }
 
-TEST(Sphere, ReturnsNoHitForMissBackwardOrStationaryRay)
-{
+TEST(Sphere, ReturnsNoHitForMissBackwardOrStationaryRay) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -5}, 1), Diffuse{}};
     EXPECT_FALSE(sphere.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}).has_value());
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, 1}}).has_value());
     EXPECT_FALSE(sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, 0}}).has_value());
 }
 
-TEST(Sphere, PreservesSmallRadiusAtLargeDistance)
-{
+TEST(Sphere, PreservesSmallRadiusAtLargeDistance) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, -10000}, 1), Diffuse{}};
     const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());
@@ -117,8 +109,7 @@ TEST(Sphere, PreservesSmallRadiusAtLargeDistance)
     EXPECT_FALSE(sphere.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}).has_value());
 }
 
-TEST(Sphere, InteriorReflectionStaysInTheShadingHemisphere)
-{
+TEST(Sphere, InteriorReflectionStaysInTheShadingHemisphere) {
     const Object sphere{std::make_unique<Sphere>(Vec3{0, 0, 0}, 2), Diffuse{}};
     const auto hit = sphere.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, -1}});
     ASSERT_TRUE(hit.has_value());

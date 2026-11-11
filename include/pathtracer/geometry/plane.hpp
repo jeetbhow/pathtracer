@@ -5,10 +5,8 @@
 #include <optional>
 #include <random>
 
-namespace pathtracer
-{
-    struct Plane : public Geometry
-    {
+namespace pathtracer {
+    struct Plane : public Geometry {
         Vec3 normal{0, 1, 0};
 
         Plane() = default;
@@ -18,8 +16,7 @@ namespace pathtracer
         Vec3 normal_at(Vec3 point) const override;
     };
 
-    struct Circle : public Plane
-    {
+    struct Circle : public Plane {
         float radius = 1.0f;
 
         Circle() = default;

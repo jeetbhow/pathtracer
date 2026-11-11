@@ -5,10 +5,8 @@
 #include <optional>
 #include <random>
 
-namespace pathtracer
-{
-    struct Sphere : public Geometry
-    {
+namespace pathtracer {
+    struct Sphere : public Geometry {
         float radius;
 
         Sphere() = default;

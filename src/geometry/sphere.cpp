@@ -12,19 +12,14 @@ using std::sin;
 using std::sqrt;
 using std::uniform_real_distribution;
 
-namespace pathtracer
-{
-    Sphere::Sphere(Vec3 position, float radius) : Geometry(position), radius(radius)
-    {
-    }
+namespace pathtracer {
+    Sphere::Sphere(Vec3 position, float radius) : Geometry(position), radius(radius) {}
 
-    Vec3 Sphere::normal_at(Vec3 point) const
-    {
+    Vec3 Sphere::normal_at(Vec3 point) const {
         return (point - position) / radius;
     }
 
-    Vec3 Sphere::random_point(mt19937& generator) const
-    {
+    Vec3 Sphere::random_point(mt19937& generator) const {
         uniform_real_distribution<float> z_dist{-1, 1};
         uniform_real_distribution<float> phi_dist{0.0f, 2.0f * pi_v<float>};
 
@@ -33,14 +28,13 @@ namespace pathtracer
         const float r = sqrt(1 - z * z);
 
         return position + radius * Vec3{
-            r * cos(phi),
-            r * sin(phi),
-            z,
-        };
+                                       r * cos(phi),
+                                       r * sin(phi),
+                                       z,
+                                   };
     }
 
-    optional<Intersection> Sphere::intersect(const Ray& ray, float t_min) const
-    {
+    optional<Intersection> Sphere::intersect(const Ray& ray, float t_min) const {
         // Promote before arithmetic so small radii survive at large distances.
         const double dx = ray.direction.x;
         const double dy = ray.direction.y;
@@ -50,23 +44,19 @@ namespace pathtracer
         const double oz = static_cast<double>(ray.origin.z) - position.z;
         const double a = dx * dx + dy * dy + dz * dz;
         const double half_b = ox * dx + oy * dy + oz * dz;
-        const double c = ox * ox + oy * oy + oz * oz
-                         - static_cast<double>(radius) * radius;
+        const double c = ox * ox + oy * oy + oz * oz - static_cast<double>(radius) * radius;
         const double discriminant = half_b * half_b - a * c;
 
-        if (a == 0.0f || discriminant < 0.0f)
-        {
+        if (a == 0.0f || discriminant < 0.0f) {
             return nullopt;
         }
 
         const double root = sqrt(discriminant);
         double t = (-half_b - root) / a;
 
-        if (t <= t_min)
-        {
+        if (t <= t_min) {
             t = (-half_b + root) / a;
-            if (t <= t_min)
-            {
+            if (t <= t_min) {
                 return nullopt;
             }
         }

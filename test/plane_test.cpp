@@ -7,8 +7,7 @@
 
 using namespace pathtracer;
 
-TEST(Plane, PositionCanBeChangedThroughObjectInterface)
-{
+TEST(Plane, PositionCanBeChangedThroughObjectInterface) {
     Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 1, 0}), Diffuse{}};
     Object& object = plane;
     EXPECT_FLOAT_EQ(object.position().y, -1);
@@ -21,8 +20,7 @@ TEST(Plane, PositionCanBeChangedThroughObjectInterface)
     EXPECT_FLOAT_EQ(hit->normal.y, 1);
 }
 
-TEST(Plane, ComputesUnitNormalIndependentOfPosition)
-{
+TEST(Plane, ComputesUnitNormalIndependentOfPosition) {
     const Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 0.6f, 0.8f}), Diffuse{}};
     const Object& object = plane;
     const Vec3 normal = object.normal_at(Vec3{5, 10, -3});
@@ -31,8 +29,7 @@ TEST(Plane, ComputesUnitNormalIndependentOfPosition)
     EXPECT_FLOAT_EQ(normal.z, 0.8f);
 }
 
-TEST(Plane, IntersectsNonUnitRayThroughObjectInterface)
-{
+TEST(Plane, IntersectsNonUnitRayThroughObjectInterface) {
     const Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 1, 0}), Diffuse{}};
     const Object& object = plane;
     const Ray ray{Vec3{3, 3, 5}, Vec3{0, -2, 0}};
@@ -48,8 +45,7 @@ TEST(Plane, IntersectsNonUnitRayThroughObjectInterface)
     EXPECT_FLOAT_EQ(hit->incoming.direction.y, -2);
 }
 
-TEST(Plane, IntersectsTiltedPlane)
-{
+TEST(Plane, IntersectsTiltedPlane) {
     const Object plane{std::make_unique<Plane>(Vec3{0, 1, 0}, normalize(Vec3{0, 1, 1})), Diffuse{}};
     const auto hit = plane.hit(Ray{Vec3{2, 3, 4}, Vec3{0, -1, -1}});
     ASSERT_TRUE(hit);
@@ -59,8 +55,7 @@ TEST(Plane, IntersectsTiltedPlane)
     EXPECT_NEAR(length(hit->normal), 1, 1e-6f);
 }
 
-TEST(Plane, FlipsShadingNormalForBackFaceHit)
-{
+TEST(Plane, FlipsShadingNormalForBackFaceHit) {
     const Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 1, 0}), Diffuse{}};
     const auto hit = plane.hit(Ray{Vec3{0, -3, 0}, Vec3{0, 1, 0}});
     ASSERT_TRUE(hit);
@@ -70,16 +65,14 @@ TEST(Plane, FlipsShadingNormalForBackFaceHit)
     EXPECT_LT(dot(hit->incoming.direction, hit->normal), 0);
 }
 
-TEST(Plane, RejectsParallelCoplanarAndStationaryRays)
-{
+TEST(Plane, RejectsParallelCoplanarAndStationaryRays) {
     const Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 1, 0}), Diffuse{}};
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{1, 0, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, -1, 0}, Vec3{1, 0, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 0, 0}}));
 }
 
-TEST(Plane, RejectsHitsBehindOriginAndAtOrBelowMinimumDistance)
-{
+TEST(Plane, RejectsHitsBehindOriginAndAtOrBelowMinimumDistance) {
     const Object plane{std::make_unique<Plane>(Vec3{0, -1, 0}, Vec3{0, 1, 0}), Diffuse{}};
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, 0, 0}, Vec3{0, 1, 0}}));
     EXPECT_FALSE(plane.hit(Ray{Vec3{0, -1, 0}, Vec3{0, -1, 0}}));
@@ -89,7 +82,6 @@ TEST(Plane, RejectsHitsBehindOriginAndAtOrBelowMinimumDistance)
     EXPECT_FALSE(plane.hit(ray, 2.0f));
 }
 
-TEST(Plane, RejectsZeroNormal)
-{
+TEST(Plane, RejectsZeroNormal) {
     EXPECT_THROW((Plane{Vec3{0, 0, 0}, Vec3{0, 0, 0}}), std::invalid_argument);
 }

@@ -4,10 +4,8 @@
 
 #include <string>
 
-namespace pathtracer
-{
-    struct Ray
-    {
+namespace pathtracer {
+    struct Ray {
         Vec3 origin;
         Vec3 direction;
 

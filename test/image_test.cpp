@@ -17,8 +17,7 @@ using namespace pathtracer;
 static_assert(!is_copy_assignable_v<Image>);
 static_assert(!is_move_assignable_v<Image>);
 
-TEST(Image, RejectsInvalidCoordinatesAndEmptyOutput)
-{
+TEST(Image, RejectsInvalidCoordinatesAndEmptyOutput) {
     Image image{2, 1};
     EXPECT_THROW(image.set_pixel(0, 2, Vec3{}), out_of_range);
     EXPECT_THROW(image.set_pixel(1, 0, Vec3{}), out_of_range);

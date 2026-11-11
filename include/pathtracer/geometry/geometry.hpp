@@ -5,10 +5,8 @@
 
 #include <optional>
 
-namespace pathtracer
-{
-    struct Geometry
-    {
+namespace pathtracer {
+    struct Geometry {
         Vec3 position{0, 0, 0};
 
         Geometry() = default;

@@ -12,8 +12,7 @@ using std::mt19937;
 
 using namespace pathtracer;
 
-TEST(Circle, PreservesRadiusCheckThroughPlaneInterface)
-{
+TEST(Circle, PreservesRadiusCheckThroughPlaneInterface) {
     std::unique_ptr<Plane> geometry = std::make_unique<Circle>(Vec3{0, 0, -3}, Vec3{0, 0, 1}, 1);
     const Object circle{std::move(geometry), Diffuse{}};
 
@@ -27,8 +26,7 @@ TEST(Circle, PreservesRadiusCheckThroughPlaneInterface)
     EXPECT_FALSE(circle.hit(Ray{Vec3{2, 0, 0}, Vec3{0, 0, -1}}));
 }
 
-TEST(Circle, RandomPointUsesSuppliedGeneratorReproducibly)
-{
+TEST(Circle, RandomPointUsesSuppliedGeneratorReproducibly) {
     const Circle circle{Vec3{2, -3, 5}, normalize(Vec3{1, 2, 3}), 2};
     mt19937 generator{42};
     mt19937 replay{42};
@@ -41,8 +39,7 @@ TEST(Circle, RandomPointUsesSuppliedGeneratorReproducibly)
     EXPECT_FLOAT_EQ(first.z, repeated_first.z);
 
     bool different_point_seen = false;
-    for (int sample = 0; sample < 128; ++sample)
-    {
+    for (int sample = 0; sample < 128; ++sample) {
         const Vec3 point = circle.random_point(generator);
         const Vec3 repeated = circle.random_point(replay);
         EXPECT_FLOAT_EQ(point.x, repeated.x);
@@ -56,26 +53,26 @@ TEST(Circle, RandomPointUsesSuppliedGeneratorReproducibly)
     EXPECT_NE(generator, initial);
 }
 
-TEST(Circle, RandomPointsLieOnPlaneAndWithinRadius)
-{
+TEST(Circle, RandomPointsLieOnPlaneAndWithinRadius) {
     const std::array normals{
-        Vec3{1, 0, 0}, Vec3{-1, 0, 0},
-        Vec3{0, 1, 0}, Vec3{0, -1, 0},
-        Vec3{0, 0, 1}, Vec3{0, 0, -1},
-        normalize(Vec3{1, 2, 3}), normalize(Vec3{-2, 3, -1}),
+        Vec3{1, 0, 0},
+        Vec3{-1, 0, 0},
+        Vec3{0, 1, 0},
+        Vec3{0, -1, 0},
+        Vec3{0, 0, 1},
+        Vec3{0, 0, -1},
+        normalize(Vec3{1, 2, 3}),
+        normalize(Vec3{-2, 3, -1}),
     };
 
-    for (const Vec3 normal : normals)
-    {
-        for (const float radius : {0.5f, 3.0f})
-        {
+    for (const Vec3 normal : normals) {
+        for (const float radius : {0.5f, 3.0f}) {
             SCOPED_TRACE(testing::Message() << "normal = (" << normal.x << ", "
-                         << normal.y << ", " << normal.z << "), radius = " << radius);
+                                            << normal.y << ", " << normal.z << "), radius = " << radius);
             const Circle circle{Vec3{3.25f, -4, 8}, normal, radius};
             mt19937 generator{1234};
 
-            for (int sample = 0; sample < 512; ++sample)
-            {
+            for (int sample = 0; sample < 512; ++sample) {
                 SCOPED_TRACE(sample);
                 const Vec3 point = circle.random_point(generator);
                 ASSERT_TRUE(std::isfinite(point.x));
@@ -89,16 +86,13 @@ TEST(Circle, RandomPointsLieOnPlaneAndWithinRadius)
     }
 }
 
-TEST(Circle, RandomPointsDoNotCollapseAtOriginOrAlongNormal)
-{
-    for (const Vec3 position : {Vec3{0, 0, 0}, Vec3{0, 0, 5}})
-    {
+TEST(Circle, RandomPointsDoNotCollapseAtOriginOrAlongNormal) {
+    for (const Vec3 position : {Vec3{0, 0, 0}, Vec3{0, 0, 5}}) {
         const Circle circle{position, Vec3{0, 0, 1}, 2};
         mt19937 generator{42};
         bool noncentral_point_seen = false;
 
-        for (int sample = 0; sample < 128; ++sample)
-        {
+        for (int sample = 0; sample < 128; ++sample) {
             const Vec3 offset = circle.random_point(generator) - position;
             EXPECT_NEAR(offset.z, 0.0f, 1e-5f);
             EXPECT_LE(length_squared(offset), 4.0f + 1e-5f);
@@ -109,8 +103,7 @@ TEST(Circle, RandomPointsDoNotCollapseAtOriginOrAlongNormal)
     }
 }
 
-TEST(Circle, RandomPointsAreUniformOverDiskArea)
-{
+TEST(Circle, RandomPointsAreUniformOverDiskArea) {
     const Circle circle{Vec3{3, -2, 7}, Vec3{0, 0, 1}, 3};
     mt19937 generator{2026};
     constexpr int sample_count = 20000;
@@ -121,8 +114,7 @@ TEST(Circle, RandomPointsAreUniformOverDiskArea)
     int inner_half_radius_count = 0;
     std::array<int, 4> quadrant_counts{};
 
-    for (int sample = 0; sample < sample_count; ++sample)
-    {
+    for (int sample = 0; sample < sample_count; ++sample) {
         const Vec3 offset = (circle.random_point(generator) - circle.position) / circle.radius;
         ASSERT_TRUE(std::isfinite(offset.x));
         ASSERT_TRUE(std::isfinite(offset.y));
@@ -132,8 +124,7 @@ TEST(Circle, RandomPointsAreUniformOverDiskArea)
         sum_y += y;
         sum_x_squared += x * x;
         sum_y_squared += y * y;
-        if (x * x + y * y <= 0.25)
-        {
+        if (x * x + y * y <= 0.25) {
             ++inner_half_radius_count;
         }
         ++quadrant_counts[(x >= 0 ? 1 : 0) + (y >= 0 ? 2 : 0)];
@@ -148,8 +139,7 @@ TEST(Circle, RandomPointsAreUniformOverDiskArea)
 
     // Half the radius encloses one quarter of the area, as does each quadrant.
     EXPECT_NEAR(static_cast<double>(inner_half_radius_count) / sample_count, 0.25, 0.02);
-    for (const int count : quadrant_counts)
-    {
+    for (const int count : quadrant_counts) {
         EXPECT_NEAR(static_cast<double>(count) / sample_count, 0.25, 0.02);
     }
 }

@@ -14,15 +14,13 @@ using std::string;
 using namespace pathtracer;
 
 template <typename T>
-class EnclosedRenderer : public testing::Test
-{
+class EnclosedRenderer : public testing::Test {
 };
 
 using EnclosedMaterials = testing::Types<Diffuse, Metal>;
 TYPED_TEST_SUITE(EnclosedRenderer, EnclosedMaterials);
 
-TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
-{
+TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere) {
     Scene scene;
     scene.objects.emplace_back(std::make_unique<Sphere>(Vec3{0, 0, 0}, 2), TypeParam{});
     Image image{3, 3};
@@ -42,8 +40,7 @@ TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
     ASSERT_EQ(width, 3);
     ASSERT_EQ(height, 3);
     ASSERT_EQ(maximum, 255);
-    for (int i = 0; i < width * height; ++i)
-    {
+    for (int i = 0; i < width * height; ++i) {
         int red, green, blue;
         ASSERT_TRUE(pixels >> red >> green >> blue);
         EXPECT_EQ(red, 0);
@@ -52,8 +49,7 @@ TYPED_TEST(EnclosedRenderer, NoSkyLightLeaksThroughAClosedSphere)
     }
 }
 
-TEST(Renderer, UsesTheReferencedScene)
-{
+TEST(Renderer, UsesTheReferencedScene) {
     Scene scene;
     Image image{1, 1};
     Camera camera{image};

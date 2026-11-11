@@ -11,17 +11,12 @@ using std::size_t;
 using std::tan;
 using std::uniform_real_distribution;
 
-namespace pathtracer
-{
-    Camera::Camera(Image& image) : image_(image)
-    {
-    }
+namespace pathtracer {
+    Camera::Camera(Image& image) : image_(image) {}
 
-    void Camera::initialize()
-    {
+    void Camera::initialize() {
         const Vec3 forward = normalize(look_at - position);
-        if (length_squared(forward) == 0.0f)
-        {
+        if (length_squared(forward) == 0.0f) {
             throw invalid_argument("Camera look_at must differ from position");
         }
 
@@ -30,12 +25,10 @@ namespace pathtracer
         focus_plane_ = Plane{position + focus_distance * forward, forward};
     }
 
-    void Camera::initialize_viewport(Vec3 forward)
-    {
+    void Camera::initialize_viewport(Vec3 forward) {
         const size_t img_width = image_.width;
         const size_t img_height = image_.height;
-        if (img_width == 0 || img_height == 0)
-        {
+        if (img_width == 0 || img_height == 0) {
             throw invalid_argument("Camera image dimensions must be nonzero");
         }
 
@@ -47,8 +40,7 @@ namespace pathtracer
         const Vec3 up = std::abs(dot(forward, DEFAULT_UP)) < 0.99f ? DEFAULT_UP : Vec3{0, 0, 1};
         const Vec3 right = normalize(cross(forward, up));
 
-        if (length_squared(right) == 0.0f)
-        {
+        if (length_squared(right) == 0.0f) {
             throw invalid_argument("Camera up vector must not be parallel to the viewing direction");
         }
 
@@ -63,8 +55,7 @@ namespace pathtracer
         pixel00_ = center - u / 2 - v / 2;
     }
 
-    Ray Camera::generate_ray(size_t row, size_t col, mt19937& generator) const
-    {
+    Ray Camera::generate_ray(size_t row, size_t col, mt19937& generator) const {
         uniform_real_distribution<float> distribution{0.0f, 1.0f};
         const float col_offset = distribution(generator);
         const float row_offset = distribution(generator);

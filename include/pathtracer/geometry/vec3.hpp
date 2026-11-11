@@ -1,11 +1,9 @@
 #pragma once
 
-namespace pathtracer
-{
+namespace pathtracer {
     float to_radians(float degrees);
 
-    struct Vec3
-    {
+    struct Vec3 {
         float x;
         float y;
         float z;

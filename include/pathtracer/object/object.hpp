@@ -6,10 +6,8 @@
 #include <optional>
 #include <memory>
 
-namespace pathtracer
-{
-    struct ShadingContext
-    {
+namespace pathtracer {
+    struct ShadingContext {
         float t;
         Vec3 position;
         Vec3 normal;
@@ -18,8 +16,7 @@ namespace pathtracer
         bool entering;
     };
 
-    struct Object
-    {
+    struct Object {
         Object(std::unique_ptr<Geometry> geometry, Material material);
 
         std::unique_ptr<Geometry> geometry;

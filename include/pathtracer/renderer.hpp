@@ -8,27 +8,22 @@
 #include <cstdint>
 #include <random>
 
-namespace pathtracer
-{
-    struct Scene
-    {
+namespace pathtracer {
+    struct Scene {
         // Shading contexts borrow materials from these objects and require stable storage.
         std::vector<Object> objects;
     };
 
-    class Renderer
-    {
+    class Renderer {
     public:
         // Non-owning: scene and camera must outlive this Renderer and any copies.
-        Renderer(const Scene& scene, const Camera& camera, std::uint32_t seed = std::random_device{}())
-            : scene_(scene), camera_(camera), generator_(seed)
-        {
-        }
+        Renderer(const Scene& scene, const Camera& camera, std::uint32_t seed = std::random_device{}()) : scene_(scene), camera_(camera), generator_(seed) {}
 
         Renderer(const Scene&&, const Camera&, std::uint32_t = std::random_device{}()) = delete;
         Renderer(const Scene&, const Camera&&, std::uint32_t = std::random_device{}()) = delete;
 
         Image& render() const;
+
     private:
         Color handle_hit(const ShadingContext& hit) const;
 

@@ -9,8 +9,7 @@ using std::uniform_real_distribution;
 
 using namespace pathtracer;
 
-TEST(Camera, InitializeRejectsZeroDimensions)
-{
+TEST(Camera, InitializeRejectsZeroDimensions) {
     Image empty_width{0, 3};
     Image empty_height{7, 0};
     Camera width_camera{empty_width};
@@ -19,8 +18,7 @@ TEST(Camera, InitializeRejectsZeroDimensions)
     EXPECT_THROW(height_camera.initialize(), invalid_argument);
 }
 
-TEST(Camera, StoresConfiguredSampleCount)
-{
+TEST(Camera, StoresConfiguredSampleCount) {
     Image image{7, 3};
     Camera camera{image};
     camera.samples = 5;
@@ -28,8 +26,7 @@ TEST(Camera, StoresConfiguredSampleCount)
     EXPECT_EQ(camera.samples, 5u);
 }
 
-TEST(Camera, InitializeRebuildsViewportUsingCurrentFov)
-{
+TEST(Camera, InitializeRebuildsViewportUsingCurrentFov) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();
@@ -54,8 +51,7 @@ TEST(Camera, InitializeRebuildsViewportUsingCurrentFov)
     EXPECT_FLOAT_EQ(repeated.z, narrow.z);
 }
 
-TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
-{
+TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator) {
     Image image{7, 3};
     Camera camera{image};
     camera.samples = 16;
@@ -63,8 +59,7 @@ TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
     mt19937 generator{42};
     mt19937 replay{42};
 
-    for (unsigned int i = 0; i < camera.samples; ++i)
-    {
+    for (unsigned int i = 0; i < camera.samples; ++i) {
         const Vec3 direction = camera.generate_ray(0, 0, generator).direction;
         const Vec3 repeated = camera.generate_ray(0, 0, replay).direction;
         EXPECT_GE(direction.x, -7.0f / 3.0f);
@@ -79,8 +74,7 @@ TEST(Camera, SamplesWithinPixelUsingSuppliedGenerator)
     EXPECT_NE(generator, (mt19937{42}));
 }
 
-TEST(Camera, TranslatingCameraAndTargetPreservesRayDirections)
-{
+TEST(Camera, TranslatingCameraAndTargetPreservesRayDirections) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();
@@ -101,8 +95,7 @@ TEST(Camera, TranslatingCameraAndTargetPreservesRayDirections)
     EXPECT_FLOAT_EQ(translated.direction.z, original.direction.z);
 }
 
-TEST(Camera, GenerateRayAimsAtWorldSpaceTarget)
-{
+TEST(Camera, GenerateRayAimsAtWorldSpaceTarget) {
     Image image{1, 1};
     Camera camera{image};
     camera.look_at = Vec3{3, 1, 1};
@@ -133,8 +126,7 @@ TEST(Camera, GenerateRayAimsAtWorldSpaceTarget)
     EXPECT_FLOAT_EQ(moved.direction.z, -1);
 }
 
-TEST(Camera, InitializeRejectsTargetAtCameraPosition)
-{
+TEST(Camera, InitializeRejectsTargetAtCameraPosition) {
     Image image{1, 1};
     Camera camera{image};
     camera.position = Vec3{3, 4, 5};
@@ -143,8 +135,7 @@ TEST(Camera, InitializeRejectsTargetAtCameraPosition)
 }
 
 // The camera looks along -Z with +Y up. A non-square image catches swapped axes.
-TEST(Camera, GenerateRaySamplesCentralPixel)
-{
+TEST(Camera, GenerateRaySamplesCentralPixel) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();
@@ -162,8 +153,7 @@ TEST(Camera, GenerateRaySamplesCentralPixel)
     EXPECT_FLOAT_EQ(direction.z, -1.0f);
 }
 
-TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio)
-{
+TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();
@@ -179,8 +169,7 @@ TEST(Camera, GenerateRaySamplesPixelAtImageAspectRatio)
     EXPECT_FLOAT_EQ(direction.z, -1.0f);
 }
 
-TEST(Camera, GenerateRayColumnsSpanLeftToRight)
-{
+TEST(Camera, GenerateRayColumnsSpanLeftToRight) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();
@@ -197,8 +186,7 @@ TEST(Camera, GenerateRayColumnsSpanLeftToRight)
     EXPECT_FLOAT_EQ(left.z, right.z);
 }
 
-TEST(Camera, GenerateRayRowsSpanTopToBottom)
-{
+TEST(Camera, GenerateRayRowsSpanTopToBottom) {
     Image image{7, 3};
     Camera camera{image};
     camera.initialize();

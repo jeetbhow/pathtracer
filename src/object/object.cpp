@@ -7,38 +7,30 @@
 using std::nullopt;
 using std::optional;
 
-namespace pathtracer
-{
+namespace pathtracer {
     Object::Object(std::unique_ptr<Geometry> geometry, Material material)
-        : geometry(std::move(geometry)), material(std::move(material))
-    {
-        if (!this->geometry)
-        {
+        : geometry(std::move(geometry)), material(std::move(material)) {
+        if (!this->geometry) {
             throw std::invalid_argument("Object geometry must not be null");
         }
     }
 
-    Vec3& Object::position()
-    {
+    Vec3& Object::position() {
         return geometry->position;
     }
 
-    const Vec3& Object::position() const
-    {
+    const Vec3& Object::position() const {
         return geometry->position;
     }
 
-    Vec3 Object::normal_at(Vec3 point) const
-    {
+    Vec3 Object::normal_at(Vec3 point) const {
         return geometry->normal_at(point);
     }
 
-    optional<ShadingContext> Object::hit(const Ray& ray, float t_min) const
-    {
+    optional<ShadingContext> Object::hit(const Ray& ray, float t_min) const {
         const auto intersection = geometry->intersect(ray, t_min);
-        
-        if (!intersection)
-        {
+
+        if (!intersection) {
             return nullopt;
         }
 
@@ -46,14 +38,12 @@ namespace pathtracer
         const float outward_normal_dot = dot(ray.direction, outward_normal);
         const Vec3 shading_normal = outward_normal_dot > 0.0f ? -1.0f * outward_normal : outward_normal;
 
-        return ShadingContext
-        {
+        return ShadingContext{
             intersection->t,
             intersection->position,
             shading_normal,
             material,
             ray,
-            outward_normal_dot < 0.0f
-        };
+            outward_normal_dot < 0.0f};
     }
 } // namespace pathtracer

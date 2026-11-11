@@ -6,10 +6,8 @@
 
 #include "pathtracer/geometry/vec3.hpp"
 
-namespace pathtracer
-{
-    class Image
-    {
+namespace pathtracer {
+    class Image {
     public:
         // Dimensions are fixed at construction; only pixel values can change.
         const std::size_t width = 0;

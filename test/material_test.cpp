@@ -9,8 +9,7 @@ using std::sqrt;
 
 using namespace pathtracer;
 
-TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
-{
+TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator) {
     const Material material = Diffuse{Color{0.2f, 0.4f, 0.6f}};
     const Ray incoming{Vec3{0, 0, 0}, Vec3{0, 0, -2}};
     const Vec3 normal{0, 0, 1};
@@ -18,8 +17,7 @@ TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
     mt19937 generator{42};
     mt19937 replay{42};
 
-    for (int i = 0; i < 32; ++i)
-    {
+    for (int i = 0; i < 32; ++i) {
         const auto scatter = pathtracer::scatter(hit, generator);
         const auto repeated = pathtracer::scatter(hit, replay);
         ASSERT_TRUE(scatter);
@@ -37,8 +35,7 @@ TEST(Material, DiffuseScattersIntoSurfaceHemisphereUsingSuppliedGenerator)
     EXPECT_NE(generator, (mt19937{42}));
 }
 
-TEST(Material, SmoothMetalReflectsWithoutConsumingRandomSamples)
-{
+TEST(Material, SmoothMetalReflectsWithoutConsumingRandomSamples) {
     const Material material = Metal{Color{0.9f, 0.8f, 0.7f}};
     const Ray incoming{Vec3{}, Vec3{2, -2, 0}};
     const ShadingContext hit{1.0f, incoming.at(1.0f), Vec3{0, 1, 0}, material, incoming, true};
@@ -55,8 +52,7 @@ TEST(Material, SmoothMetalReflectsWithoutConsumingRandomSamples)
     EXPECT_EQ(generator, (mt19937{42}));
 }
 
-TEST(Material, MetalAbsorbsReflectionsBelowSurface)
-{
+TEST(Material, MetalAbsorbsReflectionsBelowSurface) {
     const Material material = Metal{};
     const Ray incoming{Vec3{}, Vec3{0, 1, 0}};
     const ShadingContext hit{1.0f, incoming.at(1.0f), Vec3{0, 1, 0}, material, incoming, true};
@@ -64,8 +60,7 @@ TEST(Material, MetalAbsorbsReflectionsBelowSurface)
     EXPECT_FALSE(scatter(hit, generator));
 }
 
-TEST(Material, RoughMetalPerturbsReflection)
-{
+TEST(Material, RoughMetalPerturbsReflection) {
     const Material material = Metal{Color{1, 1, 1}, 0.2f};
     const Ray incoming{Vec3{}, Vec3{0, 0, -1}};
     const ShadingContext hit{1.0f, incoming.at(1.0f), Vec3{0, 0, 1}, material, incoming, true};
@@ -78,11 +73,9 @@ TEST(Material, RoughMetalPerturbsReflection)
     EXPECT_NEAR(length(scatter->direction), 1.0f, 1e-6f);
 }
 
-TEST(Material, DielectricUsesEnteringStateForRefraction)
-{
+TEST(Material, DielectricUsesEnteringStateForRefraction) {
     const Material material = Dielectric{Color{1, 1, 1}, 1.5f};
-    for (bool entering : {true, false})
-    {
+    for (bool entering : {true, false}) {
         mt19937 generator{42};
         const Vec3 normal = entering ? Vec3{0, 0, 1} : Vec3{0, 0, -1};
         const float z = sqrt(1.0f - 0.3f * 0.3f);
@@ -91,21 +84,17 @@ TEST(Material, DielectricUsesEnteringStateForRefraction)
         const float refracted_x = entering ? 0.3f / 1.5f : 0.3f * 1.5f;
         int refractions = 0;
 
-        for (int i = 0; i < 32; ++i)
-        {
+        for (int i = 0; i < 32; ++i) {
             const auto scatter = std::get<Dielectric>(material).scatter(hit, generator);
             ASSERT_TRUE(scatter);
             EXPECT_NEAR(length(scatter->direction), 1.0f, 1e-6f);
             EXPECT_FLOAT_EQ(scatter->attenuation.x, 1.0f);
             EXPECT_FLOAT_EQ(scatter->attenuation.y, 1.0f);
             EXPECT_FLOAT_EQ(scatter->attenuation.z, 1.0f);
-            if (dot(scatter->direction, normal) < 0.0f)
-            {
+            if (dot(scatter->direction, normal) < 0.0f) {
                 ++refractions;
                 EXPECT_NEAR(scatter->direction.x, refracted_x, 1e-6f);
-            }
-            else
-            {
+            } else {
                 EXPECT_NEAR(scatter->direction.x, incoming.direction.x, 1e-6f);
                 EXPECT_NEAR(scatter->direction.z, -incoming.direction.z, 1e-6f);
             }
@@ -114,8 +103,7 @@ TEST(Material, DielectricUsesEnteringStateForRefraction)
     }
 }
 
-TEST(Material, DielectricReflectsWhenExitingAboveCriticalAngle)
-{
+TEST(Material, DielectricReflectsWhenExitingAboveCriticalAngle) {
     const Material material = Dielectric{};
     mt19937 generator{42};
     const Ray incoming{Vec3{}, Vec3{sqrt(0.75f), 0, 0.5f}};

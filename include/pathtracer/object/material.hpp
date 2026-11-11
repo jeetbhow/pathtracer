@@ -6,49 +6,36 @@
 #include <random>
 #include <variant>
 
-namespace pathtracer
-{
+namespace pathtracer {
     struct ShadingContext;
 
-    struct ScatterResult
-    {
+    struct ScatterResult {
         Vec3 direction;
         Color attenuation;
     };
 
-    struct Diffuse
-    {
+    struct Diffuse {
         Color albedo;
 
-        explicit Diffuse(const Color& albedo = Color{0.5f, 0.5f, 0.5f}) : albedo(albedo)
-        {
-        }
+        explicit Diffuse(const Color& albedo = Color{0.5f, 0.5f, 0.5f}) : albedo(albedo) {}
 
         std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
 
-    struct Metal
-    {
+    struct Metal {
         Color albedo;
         float roughness;
 
-        explicit Metal(const Color& albedo = Color{0.5f, 0.5f, 0.5f}, float roughness = 0.0f)
-            : albedo(albedo), roughness(roughness)
-        {
-        }
+        explicit Metal(const Color& albedo = Color{0.5f, 0.5f, 0.5f}, float roughness = 0.0f) : albedo(albedo), roughness(roughness) {}
 
         std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
 
-    struct Dielectric
-    {
+    struct Dielectric {
         Color albedo;
         float ior;
 
-        explicit Dielectric(const Color& albedo = Color{1.0f, 1.0f, 1.0f}, float ior = 1.5f)
-            : albedo(albedo), ior(ior)
-        {
-        }
+        explicit Dielectric(const Color& albedo = Color{1.0f, 1.0f, 1.0f}, float ior = 1.5f) : albedo(albedo), ior(ior) {}
 
         std::optional<ScatterResult> scatter(const ShadingContext& hit, std::mt19937& generator) const;
     };
