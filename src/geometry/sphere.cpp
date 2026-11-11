@@ -27,11 +27,7 @@ namespace pathtracer {
         const float phi = phi_dist(generator);
         const float r = sqrt(1 - z * z);
 
-        return position + radius * Vec3{
-                                       r * cos(phi),
-                                       r * sin(phi),
-                                       z,
-                                   };
+        return position + radius * Vec3{r * cos(phi), r * sin(phi), z,};
     }
 
     optional<Intersection> Sphere::intersect(const Ray& ray, float t_min) const {
